@@ -8,15 +8,23 @@ public class NIRPP
     System.out.print("Saisissez votre NIRPP : ");
     Scanner sc = new Scanner(System.in);
     String NIR = sc.nextLine();
+
+    if (NIR.length() != 13)
+    {
+      System.out.println("Un NIRPP est composé de 13 chiffres, vous n'en avez fournis que "+NIR.length());
+      return;
+    }
+
     System.out.print("Saisissez votre code de control : ");
     int CC = sc.nextInt();
 
     if (verif(NIR,CC))
+    {
       System.out.println("Le code "+CC+" est bien valide pour le NIRPP "+NIR);
+      information(NIR);
+    }
     else
       System.out.println("Code errone !");
-
-    information(NIR);
   }
 
   public static boolean verif(String NIR, int CC)
@@ -55,11 +63,12 @@ public class NIRPP
     else
       System.out.println("Vous êtes une espece inconnu");
 
-    String mois[] = {"Janvier","Fevrier","Mars","Avril","Mai","Juin","Juillet","Aout","Septembre","Octobre","Novembre","Decembre"};
-
+    String mois[] = {"janvier","fevrier","mars","avril","mai","juin","juillet","aout","septembre","octobre","novembre","decembre"};
     int NIRmonth = (Integer.parseInt(NIR.substring(3,5)))-1; // la deuxieme borne du substring est pas incluse
 
 
     System.out.println("Vous etes né le 19"+NIR.substring(1,3)+" en "+mois[NIRmonth]);
+    System.out.println("Vous êtes né dans le "+NIR.substring(5,7)+" dans la comune n°"+NIR.substring(7,10));
+    System.out.println("Votre numero d'ordre est le "+NIR.substring(10,13));
   }
 }
