@@ -24,7 +24,11 @@ public class NIRPP
       information(NIR);
     }
     else
+    {
       System.out.println("Code errone !");
+      System.out.println("Votre code est : "+getCode(NIR));
+    }
+
   }
 
   public static boolean verif(String NIR, int CC)
@@ -45,7 +49,6 @@ public class NIRPP
 
     long NIRPP = Long.parseLong(tmp);
     NIRPP-=soustraction;
-
     float rightCode = 97-(NIRPP%97);
 
     if (rightCode != CC)
@@ -70,5 +73,12 @@ public class NIRPP
     System.out.println("Vous etes né le 19"+NIR.substring(1,3)+" en "+mois[NIRmonth]);
     System.out.println("Vous êtes né dans le "+NIR.substring(5,7)+" dans la comune n°"+NIR.substring(7,10));
     System.out.println("Votre numero d'ordre est le "+NIR.substring(10,13));
+  }
+
+  public static long getCode(String NIR)
+  {
+    long NIRPP = Long.parseLong(NIR);
+    long guessCode = 97-(NIRPP%97);
+    return guessCode;
   }
 }
