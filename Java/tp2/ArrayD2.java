@@ -1,33 +1,31 @@
 import java.util.*;
 import java.math.*;
-import java.text.*;
 
 public class ArrayD2
 {
   public static void main(String[] args)
   {
     double[][] arrayTM;
-    int[] arrayMonth;
-    double[] arrayTemperature;
+
     System.out.print("Sur combien d'année porte votre étude : ");
     Scanner sc = new Scanner(System.in);
     int nbA = sc.nextInt();
 
-    arrayMonth = new int[nbA*12];
-    arrayTemperature = new double[nbA*12];
     arrayTM = new double[nbA][12];
 
     fillTempTab(arrayTM);
-    //fillTempTab(arrayTemperature);
-
-
-
     dispTempTab(arrayTM);
-    //dispTempTab(arrayTemperature);
 
-    //System.out.print("Saisissezun numéros de mois : ");
-    //int nbM = sc.nextInt();
-    //dispMonthValue(arrayTemperature, nbM);
+    System.out.print("Saisissez un numéro de mois pour obtenir toutes ses temperatures au fil des ans : ");
+    int nbM = sc.nextInt();
+    System.out.println();
+    dispMonthValue(arrayTM, nbM);
+    System.out.println();
+
+    System.out.print("Saisissez un numéro de mois pour obtenir sa plus haute et sa plus basse temperature : ");
+    nbM = sc.nextInt();
+    System.out.println();
+    dispHigherLowerTemperature(arrayTM, nbM);
   }
 
   public static double[][] fillTempTab(double[][] arrayTM)
@@ -36,7 +34,7 @@ public class ArrayD2
     {
       for (int k=0; k < arrayTM[0].length; ++k)
       {
-      int tmp = (int)((20+Math.random()*(20))*10);
+      int tmp = (int)((-20+Math.random()*(60))*10);
       double tmp2 = tmp/10.0;
 
       arrayTM[i][k] = tmp2;
@@ -45,40 +43,38 @@ public class ArrayD2
     return arrayTM;
   }
 
-  // public static double[] fillTempTab(double[] arrayTemperature)
-  // {
-  //   for (int i=0; i < arrayTemperature.length; ++i)
-  //   {
-  //     int tmp = (int)((20+Math.random()*(20))*10);
-  //     double tmp2 = tmp/10.0;
-  //     arrayTemperature[i] = tmp2;
-  //   }
-  //   return arrayTemperature;
-  // }
-
   public static void dispTempTab(double[][] array)
   {
     for (int i=0; i < array.length; ++i)
     {
       for (int k=0; k < array[0].length; ++k)
       {
-          System.out.println((k+1)+" : "+array[i][k]);
+          System.out.println((i+1)+":"+(k+1)+" = "+array[i][k]);
       }
+      System.out.println();
     }
   }
 
-  // public static void dispTempTab(double[] array)
-  // {
-  //   for (int i=0; i < array.length; ++i)
-  //     System.out.println(i+1+" : "+array[i]);
-  // }
-  //
-  // public static void dispMonthValue(double[] array, int nbM)
-  // {
-  //   int tmp = array.length;
-  //   for(int i=0; i < (tmp/12); ++i)
-  //   {
-  //     System.out.println("La valeur du mois "+nbM+" pour l'année "+(i+1)+" est de "+array[(nbM-1)+(12*i)] + " ---- id month = "+((nbM)+(12*i)));
-  //   }
-  // }
+  public static void dispMonthValue(double[][] array, int nbM)
+  {
+    for (int i=0; i < array.length; ++i)
+    {
+          System.out.println("La valeur du mois "+nbM+" pour l'année "+(i+1)+" est de "+array[i][nbM-1]);
+    }
+  }
+
+  public static void dispHigherLowerTemperature(double[][] array, int nbM)
+  {
+    double lowertmp=array[0][nbM-1];
+    double highertmp=array[0][nbM-1];
+    for (int i=0; i < array.length; ++i)
+    {
+        if (array[i][nbM-1] < lowertmp)
+          lowertmp = array[i][nbM-1];
+        if (array[i][nbM-1] > highertmp)
+          highertmp = array[i][nbM-1];
+    }
+    System.out.println("La plus haute temperature pour le mois n°"+nbM+" est de "+highertmp+" degrés.");
+    System.out.println("La plus basse temperature pour le mois n°"+nbM+" est de "+lowertmp+" degrés.");
+  }
 }
