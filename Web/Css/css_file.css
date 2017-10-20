@@ -1,0 +1,16 @@
+ 
+body
+{
+    font-family: Tahoma, Geneva, sans-serif;
+    text-align: justify;
+    font-size: 20px;
+    color: white;
+    background-color: grey;
+}
+
+#main_menu
+{
+    list-style: none;
+    display: inline-block;
+    position: relative;
+}
