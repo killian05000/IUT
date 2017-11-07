@@ -1,22 +1,23 @@
 #include <string>
-#include "GrayImage.hpp"
+#include "ColorImage.hpp"
+#include "Toolbox.cpp"
 
-GrayImage::GrayImage(uint16_t w, uint16_t h)
+ColorImage::ColorImage(uint16_t w, uint16_t h)
           : width(w), height(h), array(nullptr)
-{ array = new uint8_t [width*height]; }
+{ array = new Color [width*height]; }
 
-GrayImage::GrayImage(const GrayImage& o)
+ColorImage::ColorImage(const ColorImage& o)
           : width(o.width), height(o.height), array(nullptr)
 {
-  array = new uint8_t [width*height];
+  array = new Color [width*height];
   for(size_t t=0; t < size_t(width*height); t++)
     array[t] = o.array[t];
 }
 
-GrayImage::~GrayImage()
+ColorImage::~ColorImage()
 { delete [] array; }
 
-void GrayImage::writePGM(ostream&)const
+void ColorImage::writePGM(ostream&)const
 {
   os << "P5 \n";
   os << "#image sauvee par Killian Wolfger \n"
@@ -26,7 +27,7 @@ void GrayImage::writePGM(ostream&)const
   os.write((const char*)array, width*height);
 }
 
-void GrayImage::skip_line(istream& is)
+void ColorImage::skip_line(istream& is)
 {
   char c;
   do
@@ -35,7 +36,7 @@ void GrayImage::skip_line(istream& is)
   } while(c != '\n'); //Avance dans les caracteres jusqu'a que ce soit une fin de ligne
 }
 
-void GrayImage::skip_comments(istream& is)
+void ColorImage::skip_comments(istream& is)
 {
   char c;
   is.get(c);
@@ -47,7 +48,7 @@ void GrayImage::skip_comments(istream& is)
   is.putback(c);
 }
 
-GrayImage GrayImage::readPGM(istream& is)
+ColorImage ColorImage::readPGM(istream& is)
 {
   string magic_number;
   is >> magic_number;
@@ -67,7 +68,7 @@ GrayImage GrayImage::readPGM(istream& is)
   {
     throw runtime_error("Erreur : La nuance de gris ne vaut pas 255");
   }
-  GrayImage* picture = new GrayImage(width, height);
+  ColorImage* picture = new ColorImage(width, height);
   is.read((char*)picture->array,width*height);
   return picture;
 
