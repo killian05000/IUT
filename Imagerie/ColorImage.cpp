@@ -17,7 +17,7 @@ ColorImage::ColorImage(const ColorImage& o)
 ColorImage::~ColorImage()
 { delete [] array; }
 
-void ColorImage::writePGM(ostream&)const
+void ColorImage::writePGM(ostream& os)const
 {
   os << "P5 \n";
   os << "#image sauvee par Killian Wolfger \n"
@@ -25,6 +25,16 @@ void ColorImage::writePGM(ostream&)const
     << "#commentaire super utile par ce que voilà \n"
     << "255 \n";
   os.write((const char*)array, width*height);
+}
+
+void ColorImage::writePPM(ostream& os)const
+{
+  os << "P6 \n";
+  os << "#image sauvee par Killian Wolfger \n"
+    << width << " " << height << "\n"
+    << "#commentaire super utile par ce que voilà \n"
+    << "255 \n";
+  os.write((const char*)array, width*height*3);
 }
 
 void ColorImage::skip_line(istream& is)
@@ -71,5 +81,22 @@ ColorImage ColorImage::readPGM(istream& is)
   ColorImage* picture = new ColorImage(width, height);
   is.read((char*)picture->array,width*height);
   return picture;
+}
 
+ColorImage* ColorImage::readPPM(std::istream &is)
+{
+  string magic_number;
+  getline(is, magic_number);
+  if(magic_number != "P6")
+    throw runtime_error("L'image n'est pas une PPM");
+  skip_comments(is);
+  uint16_t _width, _height;
+  is >> _width >> _height;
+  is.get(); // saute le \n
+  skip_comments(is);
+  uint16_t maxpixel;
+  is >> maxpixel;
+  if (maxpixel != 255)
+    throw runtime_error("La precision max est depasse");
+  is.get();
 }

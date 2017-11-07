@@ -21,7 +21,7 @@ class GrayImage
     inline const uint8_t& pixel(uint16_t x, uint16_t y) const { return  array[y*width+x]; }
 
     static GrayImage readPGM(istream& is);
-    void writePGM(ostream&)const;
+    void writePGM(ostream& os)const;
     void skip_line(istream& is);
     void skip_comments(istream& is);
 };

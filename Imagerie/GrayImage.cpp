@@ -16,7 +16,7 @@ GrayImage::GrayImage(const GrayImage& o)
 GrayImage::~GrayImage()
 { delete [] array; }
 
-void GrayImage::writePGM(ostream&)const
+void GrayImage::writePGM(ostream& os)const
 {
   os << "P5 \n";
   os << "#image sauvee par Killian Wolfger \n"
