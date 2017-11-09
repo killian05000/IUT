@@ -57,7 +57,6 @@ public class List
           System.out.println();
         }
       }
-
     }
 
     public static void displayVector(Vector list)
