@@ -37,7 +37,7 @@ public class List
           Scanner sc = new Scanner(System.in);
           System.out.print("How many elements do you want to enter ? ");
           int nb = sc.nextInt();
-          if (nb!=0)
+          if (nb>0)
           {
             System.out.println();
             for ( int i=0; i < nb; ++i)
