@@ -36,7 +36,6 @@ public class ArrayD2
       {
       int tmp = (int)((-20+Math.random()*(60))*10);
       double tmp2 = tmp/10.0;
-
       arrayTM[i][k] = tmp2;
       }
     }
