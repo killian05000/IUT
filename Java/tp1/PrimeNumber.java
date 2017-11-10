@@ -6,8 +6,7 @@ public class PrimeNumber
   public static void main(String[] args)
   {
     System.out.print("Entrer un nombre positif à tester : ");
-    Scanner keyboard = new Scanner(System.in);
-    
+    Scanner keyboard = new Scanner(System.in);    
     int userNumber = keyboard.nextInt();
 
     if (userNumber <= 0)
