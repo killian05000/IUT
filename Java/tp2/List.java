@@ -1,4 +1,3 @@
-import java.util.Vector;
 import java.util.*;
 
 public class List
@@ -78,6 +77,7 @@ public class List
 
     public static void deleteDuplicates(Vector list)
     {
+      int nbDuplicates =0;
       for ( int i=0; i < list.size(); ++i)
       {
         for ( int k=0; k < list.size(); ++k)
@@ -85,8 +85,10 @@ public class List
           if (((list.elementAt(i)).equals(list.elementAt(k))) && (k!= i))
           {
             list.removeElementAt(k);
+            nbDuplicates++;
           }
         }
       }
+      System.out.println("There is "+nbDuplicates+" duplicates");
     }
 }
