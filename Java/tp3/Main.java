@@ -11,10 +11,68 @@ public class Main
     Student dude5 = new Student("Oliver", "Hampton", 18);
 
     Vector<Student> v = new Vector<Student>();
-    v.addElement(dude);
+    fillList(v);
+    displayList(v);
+  }
 
-    System.out.println(v.getElementAt(0));
+  public static void fillList(Vector<Student> list)
+  {
+    int nb=0;
+    while (nb<=0)
+    {
+      try
+      {
+          Scanner sc = new Scanner(System.in);
+          System.out.print("How many students do you want to register ? ");
+          nb = sc.nextInt();
+          sc.nextLine();
+      }
+      catch(InputMismatchException e)
+      {
+        System.out.println();
+        System.out.println("A data type error have been occured !");
+        System.out.println("--------------Try again--------------");
+        System.out.println();
+      }
+    }
 
-    //dude.display();
+    boolean test=false;
+    for ( int i=0; i < nb; ++i)
+    {
+      test=false;
+      while (!test)
+      {
+        try
+        {
+          Scanner sc = new Scanner(System.in);
+          System.out.print("Student n°"+(i+1)+" First name : ");
+          String fname = sc.next();
+          System.out.print("Student n°"+(i+1)+" Last name : ");
+          String lname = sc.next();
+          System.out.print("Student n°"+(i+1)+" Average : ");
+          Double average = sc.nextDouble();
+          System.out.println();
+          Student tmp = new Student(fname,lname,average);
+          list.addElement(tmp);
+          test=true;
+        }
+        catch(InputMismatchException e)
+        {
+          System.out.println();
+          System.out.println("A data type error have been occured !");
+          System.out.println("--------------Try again--------------");
+          System.out.println();
+        }
+      }
+    }
+  }
+
+  public static void displayList(Vector<Student> list)
+  {
+    for ( int i=0; i < list.size(); ++i)
+    {
+        (list.elementAt(i)).displayFormal();
+    }
+    System.out.println();
   }
 }

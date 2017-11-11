@@ -17,4 +17,9 @@ public class Student
   {
     System.out.println(firstName+" "+lastName+"'s average is "+average);
   }
+
+  public void displayFormal()
+  {
+    System.out.println(firstName+" / "+lastName+" / "+average);
+  }
 }
