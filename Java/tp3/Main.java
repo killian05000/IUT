@@ -10,7 +10,8 @@ public class Main
     bestStudent(v);
     worseStudent(v);
     System.out.println();
-    displayList(v);
+    displayList(v,"Here is the list of the registered students : ");
+    gradesOrderedList(v);
     namesOrderedList(v);
     lowerThan(v);
 
@@ -38,9 +39,9 @@ public class Main
     }
   }
 
-  public static void displayList(Vector<Student> list)
+  public static void displayList(Vector<Student> list, String message)
   {
-    System.out.println("Here is the list of the registered students : ");
+    System.out.println(message);
     for ( int i=0; i < list.size(); ++i)
     {
         (list.elementAt(i)).displayFormal();
@@ -63,7 +64,7 @@ public class Main
         studentRank = i;
       }
     }
-    System.out.println("The student with the best grade is "+(list.elementAt(studentRank)).firstName+" "+(list.elementAt(studentRank)).lastName+" with an average of "+(list.elementAt(studentRank)).average);
+    System.out.println("The best student is "+(list.elementAt(studentRank)).firstName+" "+(list.elementAt(studentRank)).lastName+" with an average of "+(list.elementAt(studentRank)).average);
   }
 
   public static void worseStudent(Vector<Student> list)
@@ -81,15 +82,13 @@ public class Main
         studentRank = i;
       }
     }
-    System.out.println("The student with the worse grade is "+(list.elementAt(studentRank)).firstName+" "+(list.elementAt(studentRank)).lastName+" with an average of "+(list.elementAt(studentRank)).average);
+    System.out.println("The worse student is "+(list.elementAt(studentRank)).firstName+" "+(list.elementAt(studentRank)).lastName+" with an average of "+(list.elementAt(studentRank)).average);
   }
 
   public static void lowerThan(Vector<Student> list)
   {
     double step=10;
-    System.out.print("Enter a grade (you will get a list of the students with a lower one) : ");
-    Scanner sc = new Scanner(System.in);
-    step = sc.nextDouble();
+    step = toolBox.ASK.askDouble("Enter a grade (you will get a list of the students with a lower one) : ");
 
     for ( int i=0; i < list.size(); ++i)
     {
@@ -98,17 +97,62 @@ public class Main
     }
   }
 
+  // only works for the first letter of the first name. It requires to be a lowercase
   public static void namesOrderedList(Vector<Student> list)
   {
-    Vector<Student> orderList = new Vector<Student>();
-    for ( int i=0; i < list.size(); ++i)
+    Vector<Student> orderedList = new Vector<Student>();
+    Student tmp;
+    int listSize = list.size();
+    for ( int k=0; k < listSize; ++k)
     {
-      if (((list.elementAt(i)).lname).charAt(0) > ((list.elementAt(0)).lname).charAt(0))
-        orderList.addElement((list.elementAt(i)));
-      else
-        orderList.addElement((list.elementAt(0)));
+      tmp = list.elementAt(0);
+      int rank = 0;
+      for ( int i=0; i < list.size(); ++i)
+      {
+        if (((list.elementAt(i)).firstName).charAt(0) < tmp.firstName.charAt(0))
+        {
+          tmp = list.elementAt(i);
+          rank = i;
+        }
+      }
+      orderedList.addElement(tmp);
+      list.removeElementAt(rank);
     }
-    System.out.println("The ordered list of the sutends : ");
-    orderList.displayList();
+
+    for ( int i=0; i < orderedList.size(); ++i)
+    {
+      list.addElement(orderedList.elementAt(i));
+    }
+    displayList(list,"Here is the names ordered list of the sutends : ");
+  }
+
+  public static void gradesOrderedList(Vector<Student> list)
+  {
+    Vector<Student> orderedList = new Vector<Student>();
+    Student tmp;
+    int listSize = list.size();
+
+    for ( int k=0; k < listSize; ++k)
+    {
+      tmp = list.elementAt(0);
+      int rank = 0;
+      for ( int i=0; i < list.size(); ++i)
+      {
+        if (((list.elementAt(i)).average) > tmp.average)
+        {
+          tmp = list.elementAt(i);
+          rank = i;
+        }
+      }
+      orderedList.addElement(tmp);
+      list.removeElementAt(rank);
+    }
+
+    for ( int i=0; i < orderedList.size(); ++i)
+    {
+      list.addElement(orderedList.elementAt(i));
+    }
+
+    displayList(list,"Here is the grades ordered list of the sutends : ");
   }
 }
