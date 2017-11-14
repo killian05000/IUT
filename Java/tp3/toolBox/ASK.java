@@ -30,7 +30,7 @@ public class ASK
       {
         System.out.println();
         System.out.println("A data type error have been occured !");
-        System.out.println("              Try again              ");
+        System.out.println("--------------Try again--------------");
         System.out.println();
       }
     }
