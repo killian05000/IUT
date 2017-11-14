@@ -99,4 +99,7 @@ ColorImage* ColorImage::readPPM(std::istream &is)
   if (maxpixel != 255)
     throw runtime_error("La precision max est depasse");
   is.get();
+  ColorImage *c_img = new ColorImage(_width, _height);
+  is.read((char*)c_img->array,_width x, _height x*3);
+  return c_img
 }

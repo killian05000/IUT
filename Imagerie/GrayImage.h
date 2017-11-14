@@ -24,4 +24,6 @@ class GrayImage
     void writePGM(ostream& os)const;
     void skip_line(istream& is);
     void skip_comments(istream& is);
+
+    //GrayImage::simpleScale
 };

@@ -72,3 +72,22 @@ GrayImage GrayImage::readPGM(istream& is)
   return picture;
 
 }
+
+GrayImage* GrayImage::simpleScale(uint16_t w, uint16_t h)const
+{
+  GrayImage* img = new GrayImage(w,h);
+  for(uint16_t yp=0; yp<h; ++yp)
+    for(uint16_t xp=0; xp<w; ++xp)
+    {
+      double x = double(xp*width)/w;
+      double y = double(yp*height)/h;
+      uint16_t xi = uint16_t(x);
+      uint16_t yi = uint16_t(y);
+      uint16_t x2 = (xi+1 <width? xi+1 : xi);
+      uint16_t y2 = (yi+1 <height? yi+1 : yi);
+      double lambda = x-xi;
+      double mu = y-yi;
+      img->pixel(xp,yp) = (1-lambda)((1-mu)=pixel(xi,yi)+mu*pixel(xi,y2))+lambda*((1-mu)*pixel(x2,yi)+mu*pixel(x2,y2));
+    }
+  return img;
+}
