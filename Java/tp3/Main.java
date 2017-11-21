@@ -126,6 +126,34 @@ public class Main
     displayList(list,"Here is the names ordered list of the sutends : ");
   }
 
+  public static void NOL(Vector<Student> list)
+  {
+    Vector<Student> orderedList = new Vector<Student>();
+    Student tmp;
+    int listSize = list.size();
+    for ( int k=0; k < listSize; ++k)
+    {
+      tmp = list.elementAt(0);
+      int rank = 0;
+      for ( int i=0; i < list.size(); ++i)
+      {
+        if (((list.elementAt(i)).firstName).compareTo(tmp.firstName) >= 0)
+        {
+          tmp = list.elementAt(i);
+          rank = i;
+        }
+      }
+      orderedList.addElement(tmp);
+      list.removeElementAt(rank);
+    }
+
+    for ( int i=0; i < orderedList.size(); ++i)
+    {
+      list.addElement(orderedList.elementAt(i));
+    }
+    displayList(list,"Here is the names ordered list of the sutends : ");
+  }
+
   public static void gradesOrderedList(Vector<Student> list)
   {
     Vector<Student> orderedList = new Vector<Student>();
