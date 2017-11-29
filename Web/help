@@ -1,0 +1,34 @@
+Structure du code : 
+
+---> Accueil (presentation du site + connexion/inscription) X
+
+---> Taverne (dernieres news/publi) X
+     --> Histoire
+         -> scenarios X
+         -> postulation
+     --> Ressources
+         -> dessins X
+         -> paysages
+         -> tokens
+         -> cartes
+         -> musiques
+         
+---> Journal (espace perso)
+     --> Historique
+     --> Nouvelle publication X
+     
+---> Profil (user/modo/admin)
+     
+---> A propos (nous contacter) X
+
+Roles : 
+-utilisateur
+-moderateurs
+-administrateur
+
+bonus :
+-notation de scenario
+-editeur de texte html
+
+Obligatoire :
+-validation par modos/admin des scenarios

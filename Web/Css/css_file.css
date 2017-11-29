@@ -1,4 +1,3 @@
- 
 body
 {
     font-family: Tahoma, Geneva, sans-serif;
@@ -8,9 +7,24 @@ body
     background-color: grey;
 }
 
-#main_menu
-{
-    list-style: none;
-    display: inline-block;
-    position: relative;
+#main_menu {
+	padding: 0; margin: 0;
+}
+
+#main menu li {
+	display: inline;
+	list-style: none; /* nécessaire pour IE7 */
+}
+
+#main_menu {
+	padding: 0; margin: 0;
+	text-align: center; /* centrer le texte */
+}
+#main_menu li {
+	display: inline;
+	list-style: none;
+}
+#main_menu a {
+	display:inline-block;
+	margin: 0 30px;
 }
