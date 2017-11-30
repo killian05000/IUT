@@ -14,7 +14,6 @@ public class Main
     gradesOrderedList(v);
     namesOrderedList(v);
     lowerThan(v);
-
   }
 
   public static void fillList(Vector<Student> list)
