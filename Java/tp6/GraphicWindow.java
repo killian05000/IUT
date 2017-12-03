@@ -11,6 +11,6 @@ public class GraphicWindow extends JFrame
     this.setResizable(false);
     this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     this.setVisible(true);
-    this.setContentPane(DrawingZone);
+    this.setContentPane(DrawZ);
   }
 }

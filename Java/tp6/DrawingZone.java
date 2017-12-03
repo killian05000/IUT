@@ -20,4 +20,11 @@ public class DrawingZone extends JPanel
       e.printStackTrace();
     }
   }
+
+  public void paint(Graphics g)
+  {
+    // affiche_fond(g);
+    // affiche_graduations(g);
+    // affiche_aiguilles(g);
+  }
 }
