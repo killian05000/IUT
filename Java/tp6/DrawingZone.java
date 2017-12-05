@@ -1,5 +1,6 @@
 import java.util.*;
-import javax.swing.JPanel;
+import java.lang.*;
+import javax.swing.*;
 import java.awt.*;
 import java.io.File;
 import javax.imageio.ImageIO;
@@ -14,6 +15,7 @@ public class DrawingZone extends JPanel
     try
     {
       img = ImageIO.read(new File("truc.jpg"));
+      setSize(new Dimension(200,200));
     }
     catch (IOException e)
     {
@@ -23,8 +25,28 @@ public class DrawingZone extends JPanel
 
   public void paint(Graphics g)
   {
-    // affiche_fond(g);
-    // affiche_graduations(g);
-    // affiche_aiguilles(g);
+    displayBackground(g);
+    // displayGraduations(g);
+    // displayHands(g);
   }
+
+  public void displayBackground(Graphics g)
+  {
+    g.fillRect(0, 0, getWidth(), getHeight());
+    Graphics2D g2 = (Graphics2D) g;
+    g2.setStroke(new BasicStroke(20));
+    g.drawImage(img, (int)(this.getWidth()*0.1), (int)(this.getHeight()*0.1), (int)(this.getWidth()*0.8), (int)(this.getHeight()*0.8), null);
+    //g.drawImage(img, 0, 0, 200, 200, null);
+    g.drawOval((int)(this.getWidth()*0.1), (int)(this.getHeight()*0.1), (int)(this.getWidth()*0.8), (int)(this.getHeight()*0.8));
+  }
+
+  // public void displayGraduations(Graphics g)
+  // {
+  //
+  // }
+  //
+  // public void displayHands(Graphics g)
+  // {
+  //
+  // }
 }

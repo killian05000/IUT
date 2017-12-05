@@ -3,10 +3,12 @@ import javax.swing.JFrame;
 
 public class GraphicWindow extends JFrame
 {
-  DrawingZone DrawZ;
+  DrawingZone DrawZ = new DrawingZone();
+
   public GraphicWindow()
   {
     this.setSize(300,300);
+    this.setTitle("Clock");
     this.setLocationRelativeTo(null);
     this.setResizable(false);
     this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
