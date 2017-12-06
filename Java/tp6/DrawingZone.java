@@ -34,10 +34,11 @@ public class DrawingZone extends JPanel
   {
     g.fillRect(0, 0, getWidth(), getHeight());
     Graphics2D g2 = (Graphics2D) g;
-    g2.setStroke(new BasicStroke(20));
+    g2.setStroke(new BasicStroke(50));
     g.drawImage(img, (int)(this.getWidth()*0.1), (int)(this.getHeight()*0.1), (int)(this.getWidth()*0.8), (int)(this.getHeight()*0.8), null);
     //g.drawImage(img, 0, 0, 200, 200, null);
-    g.drawOval((int)(this.getWidth()*0.1), (int)(this.getHeight()*0.1), (int)(this.getWidth()*0.8), (int)(this.getHeight()*0.8));
+    //g.drawOval((int)(this.getWidth()*0.1), (int)(this.getHeight()*0.1), (int)(this.getWidth()*0.8), (int)(this.getHeight()*0.8));
+    g.drawOval(5, 0,290, 260);
   }
 
   // public void displayGraduations(Graphics g)
