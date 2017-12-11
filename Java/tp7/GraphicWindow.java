@@ -1,5 +1,6 @@
 import java.util.*;
 import javax.swing.*;
+import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.*;
 import java.awt.event.*;
 
@@ -8,10 +9,10 @@ class GraphicWindow extends JFrame implements ActionListener
   GraphicWindow(String s)
   {
     super(s);
-    this.setSize(600,400);
-    this.setLocationRelativeTo(null);
-    this.setResizable(false);
-    this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+    setSize(600,400);
+    setLocationRelativeTo(null);
+    setResizable(false);
+    setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
     JMenuBar menuBar = new JMenuBar();
     JMenu menu = new JMenu("File");
@@ -60,6 +61,15 @@ class GraphicWindow extends JFrame implements ActionListener
     if (evenement.getActionCommand().equals("Load"))
     {
       System.out.println("MENU LOAD");
+
+      JFileChooser selector = new JFileChooser();
+      selector.addChoosableFileFilter(new FileNameExtensionFilter("txt files", "txt"));
+      int result = selector.showOpenDialog(null);
+
+      if (result == JFileChooser.APPROVE_OPTION)
+      {
+        System.out.println("Chosen file : " + selector.getSelectedFile().getAbsolutePath());
+      }
     }
     if (evenement.getActionCommand().equals("Save"))
     {
@@ -67,7 +77,13 @@ class GraphicWindow extends JFrame implements ActionListener
     }
     if (evenement.getActionCommand().equals("Quit"))
     {
-      System.out.println("MENU QUIT");
+      System.out.println("MENU QUIT ATTEMPT");
+      int result = JOptionPane.showConfirmDialog(null, "Voulez vous quitter ?", "Quitter", JOptionPane.YES_NO_OPTION, JOptionPane.ERROR_MESSAGE);
+      if( result == JOptionPane.YES_OPTION )
+        {
+          System.out.println("MENU QUIT");
+          System.exit(0);
+        }
     }
 
               ///////// MENU COLOR /////////
@@ -90,30 +106,3 @@ class GraphicWindow extends JFrame implements ActionListener
     }
   }
 }
-
-
-// import javax.swing.*;
-// import java.awt.*;
-// import java.awt.event.*;
-// class GraphicWindow extends JFrame implements ActionListener
-// {
-// GraphicWindow(String s)
-// {
-// super(s);
-// setSize(400,300);
-// setVisible(true);
-// JMenuBar menuBar = new JMenuBar();
-// setJMenuBar(menuBar);
-// JMenu menu = new JMenu("Fichier");
-// menuBar.add(menu);
-// JMenuItem item =new JMenuItem("Quitter");
-// menu.add(item);
-// item.setActionCommand("quit");
-// item.addActionListener(this);
-// }
-// public void actionPerformed(ActionEvent evenement)
-// {
-// if(evenement.getActionCommand().equals("quit"))
-// System.out.println("MENU QUITTER");
-// }
-// }
