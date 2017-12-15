@@ -14,8 +14,8 @@ class Node
     Node(Node* _parent, size_t _value);
     Node(Node* _parent, Node* _left, Node* _right, size_t _value);
 
-    const int getValue();
-    void setValue(int _value);
+    const size_t getValue();
+    void setValue(size_t _value);
 
     const bool isRoot();
     const bool isIntern();
