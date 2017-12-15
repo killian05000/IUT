@@ -16,7 +16,14 @@ Node::Node(Node* _parent, Node* _left, Node* _right, size_t _value)
   value = _value;
 }
 
-const size_t Node::getValue()
+Node::~Node()
+{
+  delete parent;
+  delete left;
+  delete right;
+}
+
+size_t Node::getValue()
 {
   return value;
 }
@@ -44,4 +51,19 @@ const bool Node::isExtern()
 const bool Node::isEmpty()
 {
   return(value==0); // Change the default value
+}
+
+Node* Node::getParent()
+{
+  return parent;
+}
+
+Node* Node::getLeft()
+{
+  return left;
+}
+
+Node* Node::getRight()
+{
+  return right;
 }

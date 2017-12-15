@@ -9,12 +9,12 @@ class Node
     Node* right;
     size_t value=0;
 
-
   public:
     Node(Node* _parent, size_t _value);
     Node(Node* _parent, Node* _left, Node* _right, size_t _value);
+    ~Node();
 
-    const size_t getValue();
+    size_t getValue();
     void setValue(size_t _value);
 
     const bool isRoot();
@@ -22,7 +22,7 @@ class Node
     const bool isExtern();
     const bool isEmpty();
 
-    const Node* getParent();
-    const Node* getLeft();
-    const Node* getRight();
+    Node* getParent();
+    Node* getLeft();
+    Node* getRight();
 };
