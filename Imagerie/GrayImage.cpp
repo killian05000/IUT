@@ -16,17 +16,8 @@ GrayImage::GrayImage(const GrayImage& o)
 GrayImage::~GrayImage()
 { delete [] array; }
 
-void GrayImage::writePGM(ostream& os)const
-{
-  os << "P5 \n";
-  os << "#image sauvee par Killian Wolfger \n"
-    << width << " " << height << "\n"
-    << "#commentaire super utile par ce que voilà \n"
-    << "255 \n";
-  os.write((const char*)array, width*height);
-}
 
-void GrayImage::skip_line(istream& is)
+void skip_line(istream& is)
 {
   char c;
   do
@@ -35,7 +26,7 @@ void GrayImage::skip_line(istream& is)
   } while(c != '\n'); //Avance dans les caracteres jusqu'a que ce soit une fin de ligne
 }
 
-void GrayImage::skip_comments(istream& is)
+void skip_comments(istream& is)
 {
   char c;
   is.get(c);
@@ -47,11 +38,39 @@ void GrayImage::skip_comments(istream& is)
   is.putback(c);
 }
 
-GrayImage GrayImage::readPGM(istream& is)
+void GrayImage::rectangle(uint16_t x, uint16_t y, uint16_t w, uint16_t h, uint8_t color) {
+    for(size_t i= 0; i < w; ++i) {
+        pixel(x+i,y)= color;
+        pixel(x+i,y+h-1)= color;
+    }
+    for(uint16_t i= 1; i < h-1; ++i) {
+        pixel(x,y+i)= color;
+        pixel(x+w-1,y+i)= color;
+    }
+}
+
+void GrayImage::fillRectangle(uint16_t x, uint16_t y, uint16_t w, uint16_t h, uint8_t color) {
+    for(size_t i= 0; i < w; ++i) {
+        for(size_t j= 0; j < h; ++j)
+            pixel(i+x,j+y)= color;
+    }
+}
+
+void GrayImage::writePGM(ostream& os)const
+{
+  os << "P5 \n";
+  os << "#image sauvee par Killian Wolfger \n"
+    << width << " " << height << "\n"
+    << "#commentaire super utile par ce que voilà \n"
+    << "255 \n";
+  os.write((const char*)array, width*height);
+}
+
+GrayImage* GrayImage::readPGM(istream& is)
 {
   string magic_number;
   is >> magic_number;
-  of (magic_number != "P5")
+  if (magic_number != "P5")
   {
     throw runtime_error("Erreur : Ce n'est pas un PGM !");
   }
@@ -73,21 +92,42 @@ GrayImage GrayImage::readPGM(istream& is)
 
 }
 
-GrayImage* GrayImage::simpleScale(uint16_t w, uint16_t h)const
+GrayImage* GrayImage::simpleScale(uint16_t w, uint16_t h) const
 {
-  GrayImage* img = new GrayImage(w,h);
-  for(uint16_t yp=0; yp<h; ++yp)
-    for(uint16_t xp=0; xp<w; ++xp)
-    {
-      double x = double(xp*width)/w;
-      double y = double(yp*height)/h;
-      uint16_t xi = uint16_t(x);
-      uint16_t yi = uint16_t(y);
-      uint16_t x2 = (xi+1 <width? xi+1 : xi);
-      uint16_t y2 = (yi+1 <height? yi+1 : yi);
-      double lambda = x-xi;
-      double mu = y-yi;
-      img->pixel(xp,yp) = (1-lambda)((1-mu)=pixel(xi,yi)+mu*pixel(xi,y2))+lambda*((1-mu)*pixel(x2,yi)+mu*pixel(x2,y2));
-    }
-  return img;
+	GrayImage* img= new GrayImage(w,h);
+	for (uint16_t yp=0; yp<h; ++yp)
+		for(uint16_t xp=0; xp<w ; ++xp){
+
+			double x = double((xp*width)/w);
+			double y = double((yp*height)/h);
+
+			uint16_t xi = uint16_t(x);
+			uint16_t yi = uint16_t(y);
+
+			img -> pixel(xp,yp) = pixel(xi,yi);
+		}
+	return img;
+}
+
+GrayImage* GrayImage::biScale(uint16_t w, uint16_t h) const
+{
+	GrayImage* img= new GrayImage(w,h);
+	for (uint16_t yp=0; yp<h; ++yp)
+		for(uint16_t xp=0; xp<w ; ++xp){
+
+			double x = double((xp*width)/w);
+			double y = double((yp*height)/h);
+
+			uint16_t xi = uint16_t(x);
+			uint16_t yi = uint16_t(y);
+
+			uint16_t x2 = (xi+1<width? xi+1:xi);
+			uint16_t y2 = (yi+1<height? yi+1:yi);
+
+			double lambda = x-xi;
+			double mu = y-yi;
+
+			img->pixel(xp,yp)=(1-lambda)*((1-mu)*pixel(xi,yi)+mu*pixel(xi,y2))+lambda*((1-mu)*pixel(x2,yi)+mu*pixel(x2,y2));
+		}
+	return img;
 }
