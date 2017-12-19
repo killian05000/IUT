@@ -1,6 +1,5 @@
 #include <string>
 #include "ColorImage.hpp"
-#include "Toolbox.cpp"
 
 ColorImage::ColorImage(uint16_t w, uint16_t h)
           : width(w), height(h), array(nullptr)
@@ -16,6 +15,27 @@ ColorImage::ColorImage(const ColorImage& o)
 
 ColorImage::~ColorImage()
 { delete [] array; }
+
+void skip_line(istream& is)
+{
+  char c;
+  do
+  {
+    is.get(c);
+  } while(c != '\n'); //Avance dans les caracteres jusqu'a que ce soit une fin de ligne
+}
+
+void skip_comments(istream& is)
+{
+  char c;
+  is.get(c);
+  while( c == '#') //S'il y à un # (début de commentaire)
+  {
+    skip_line(is); //On Avance dans les caractère jusqu'à \n
+    is.get(c); // On prend le caractere suivant pour le tester
+  }
+  is.putback(c);
+}
 
 void ColorImage::writePGM(ostream& os)const
 {
@@ -37,32 +57,50 @@ void ColorImage::writePPM(ostream& os)const
   os.write((const char*)array, width*height*3);
 }
 
-void ColorImage::skip_line(istream& is)
-{
-  char c;
-  do
-  {
-    is.get(c);
-  } while(c != '\n'); //Avance dans les caracteres jusqu'a que ce soit une fin de ligne
+void ColorImage::rectangle(uint16_t x, uint16_t y, uint16_t w, uint16_t h, Color color) {
+    for(size_t i= 0; i < w; ++i) {
+        pixel(x+i,y)= color;
+        pixel(x+i,y+h-1)= color;
+    }
+    for(uint16_t i= 1; i < h-1; ++i) {
+        pixel(x,y+i)= color;
+        pixel(x+w-1,y+i)= color;
+    }
 }
 
-void ColorImage::skip_comments(istream& is)
-{
-  char c;
-  is.get(c);
-  while( c == '#') //S'il y à un # (début de commentaire)
-  {
-    skip_line(is); //On Avance dans les caractère jusqu'à \n
-    is.get(c); // On prend le caractere suivant pour le tester
-  }
-  is.putback(c);
+void ColorImage::fillRectangle(uint16_t x, uint16_t y, uint16_t w, uint16_t h, Color color) {
+    for(size_t i= 0; i < w; ++i) {
+        for(size_t j= 0; j < h; ++j)
+            pixel(i+x,j+y)= color;
+    }
 }
 
-ColorImage ColorImage::readPGM(istream& is)
+ColorImage *ColorImage::readPPM(istream & is)
+{
+    string line;
+    getline(is,line);
+    if (line != "P6")
+        throw runtime_error ("L'image n'est pas une PPM." );
+    skip_comments(is);
+    uint16_t width,height;
+    is >> width >> height;
+    is.get();
+    skip_comments(is);
+    uint16_t maxpixel;
+    is >> maxpixel;
+    if(maxpixel != 255)
+        throw runtime_error ("La precision maximal est depasse.");
+    is.get();
+    ColorImage * C_ing= new ColorImage(width,height);
+    is.read((char*)C_ing->array, width* height *3);
+    return C_ing;
+}
+
+ColorImage* ColorImage::readPGM(istream& is)
 {
   string magic_number;
   is >> magic_number;
-  of (magic_number != "P5")
+  if (magic_number != "P5")
   {
     throw runtime_error("Erreur : Ce n'est pas un PGM !");
   }
@@ -83,23 +121,9 @@ ColorImage ColorImage::readPGM(istream& is)
   return picture;
 }
 
-ColorImage* ColorImage::readPPM(std::istream &is)
-{
-  string magic_number;
-  getline(is, magic_number);
-  if(magic_number != "P6")
-    throw runtime_error("L'image n'est pas une PPM");
-  skip_comments(is);
-  uint16_t _width, _height;
-  is >> _width >> _height;
-  is.get(); // saute le \n
-  skip_comments(is);
-  uint16_t maxpixel;
-  is >> maxpixel;
-  if (maxpixel != 255)
-    throw runtime_error("La precision max est depasse");
-  is.get();
-  ColorImage *c_img = new ColorImage(_width, _height);
-  is.read((char*)c_img->array,_width x, _height x*3);
-  return c_img
+void ColorImage::clear(Color color) {
+    if(color <= 0 || color >= 255)
+        throw runtime_error("La valeur de la couleur doit etre comprise entre 0 et 255.");
+    for(int i= 0; i < width*height; ++i)
+        array[i]= color;
 }
