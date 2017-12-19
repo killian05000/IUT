@@ -149,16 +149,6 @@ Color::Color(uint8_t _r, uint8_t _g, uint8_t _b)
 Color::~Color()
 {}
 
-Color::operator*(double alpha, const Color& color)
-{
-
-}
-
-Color::operator+(const Color& c1, const Color& c2)
-{
-
-}
-
 //--------------------------------------ColorImage--------------------------------------//
 
 ColorImage::ColorImage(uint16_t w, uint16_t h)
@@ -197,15 +187,15 @@ void ColorImage::fillRectangle(uint16_t x, uint16_t y, uint16_t w, uint16_t h, C
     }
 }
 
-// void ColorImage::writePGM(ostream& os)const
-// {
-//   os << "P5 \n";
-//   os << "#image sauvee par Killian Wolfger \n"
-//     << width << " " << height << "\n"
-//     << "#commentaire super utile par ce que voilà \n"
-//     << "255 \n";
-//   os.write((const char*)array, width*height);
-// }
+void ColorImage::writePGM(ostream& os)const
+{
+  os << "P5 \n";
+  os << "#image sauvee par Killian Wolfger \n"
+    << width << " " << height << "\n"
+    << "#commentaire super utile par ce que voilà \n"
+    << "255 \n";
+  os.write((const char*)array, width*height);
+}
 
 // ColorImage* ColorImage::readPGM(istream& is)
 // {
@@ -270,50 +260,3 @@ void ColorImage::clear(Color color)
     for(int i= 0; i < width*height; ++i)
         array[i]= color;
 }
-
-ColorImage* ColorImage::simpleScale(uint16_t w, uint16_t h) const
-{
-	ColorImage* img= new ColorImage(w,h);
-	for (uint16_t yp=0; yp<h; ++yp)
-		for(uint16_t xp=0; xp<w ; ++xp)
-    {
-
-			double x = double((xp*width)/w);
-			double y = double((yp*height)/h);
-
-			uint16_t xi = uint16_t(x);
-			uint16_t yi = uint16_t(y);
-
-			img -> pixel(xp,yp) = pixel(xi,yi);
-		}
-	return img;
-}
-
-ColorImage* ColorImage::bilinearScale(uint16_t w, uint16_t h) const
-{
-	ColorImage* img= new ColorImage(w,h);
-	for (uint16_t yp=0; yp<h; ++yp)
-		for(uint16_t xp=0; xp<w ; ++xp){
-
-			double x = double((xp*width)/w);
-			double y = double((yp*height)/h);
-
-			uint16_t xi = uint16_t(x);
-			uint16_t yi = uint16_t(y);
-
-			uint16_t x2 = (xi+1<width? xi+1:xi);
-			uint16_t y2 = (yi+1<height? yi+1:yi);
-
-			double lambda = x-xi;
-			double mu = y-yi;
-
-			img->pixel(xp,yp)=(1-lambda)*((1-mu)*pixel(xi,yi)+mu*pixel(xi,y2))+lambda*((1-mu)*pixel(x2,yi)+mu*pixel(x2,y2));
-		}
-	return img;
-}
-
-ColorImage* ColorImage::readTGA(istream& is)
-{}
-
-void ColorImage::writeTGA(ostream& os, bool b) const
-{}

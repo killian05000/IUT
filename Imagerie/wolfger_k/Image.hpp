@@ -91,15 +91,10 @@ class ColorImage
     void rectangle(uint16_t x, uint16_t y, uint16_t w, uint16_t h, Color color);
   	void fillRectangle(uint16_t x, uint16_t y, uint16_t w, uint16_t h, Color color);
 
-    ColorImage *simpleScale(uint16_t w, uint16_t h) const;
-    ColorImage *bilinearScale(uint16_t w, uint16_t h) const;
-
-    // static ColorImage *readPGM(istream& is);
-    // void writePGM(ostream& os) const;
-    static ColorImage* readPPM(istream & is);
-    void writePPM(ostream &os) const;
-    static ColorImage* readTGA(istream& is);
-    void writeTGA(ostream& os, bool b) const;
+    static ColorImage* readPGM(istream& is);
+    void writePGM(ostream& os) const;
+    static ColorImage *readPPM(std::istream & is);
+    void writePPM(std::ostream &os) const;
 
     void clear(Color color);
 };
