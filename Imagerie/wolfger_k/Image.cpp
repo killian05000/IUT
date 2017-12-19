@@ -76,7 +76,7 @@ GrayImage* GrayImage::readPGM(istream& is)
   is >> magic_number;
   if (magic_number != "P5")
   {
-    throw runtime_error("Erreur : Ce n'est pas un PGM !");
+    throw runtime_error(" Erreur (func GrayImage::readPGM) : Ce n'est pas un PGM [magic numer != P5] !");
   }
   skip_line(is);
   skip_comments(is);
@@ -88,7 +88,7 @@ GrayImage* GrayImage::readPGM(istream& is)
   is >> nu_grey;
   if (nu_grey != 255)
   {
-    throw runtime_error("Erreur : La nuance de gris ne vaut pas 255");
+    throw runtime_error(" Erreur (func GrayImage::readPGM) : La precision maximal est depasse.");
   }
   GrayImage* picture = new GrayImage(width, height);
   is.read((char*)picture->array,width*height);
@@ -100,7 +100,8 @@ GrayImage* GrayImage::simpleScale(uint16_t w, uint16_t h) const
 {
 	GrayImage* img= new GrayImage(w,h);
 	for (uint16_t yp=0; yp<h; ++yp)
-		for(uint16_t xp=0; xp<w ; ++xp){
+		for(uint16_t xp=0; xp<w ; ++xp)
+    {
 
 			double x = double((xp*width)/w);
 			double y = double((yp*height)/h);
@@ -196,30 +197,30 @@ void ColorImage::writePGM(ostream& os)const
   os.write((const char*)array, width*height);
 }
 
-ColorImage* ColorImage::readPGM(istream& is)
-{
-  string magic_number;
-  is >> magic_number;
-  if (magic_number != "P5")
-  {
-    throw runtime_error("Erreur : Ce n'est pas un PGM !");
-  }
-  skip_line(is);
-  skip_comments(is);
-  uint16_t width, height;
-  is >> width >> height;
-  skip_line(is);
-  skip_comments(is);
-  unsigned short nu_grey;
-  is >> nu_grey;
-  if (nu_grey != 255)
-  {
-    throw runtime_error("Erreur : La nuance de gris ne vaut pas 255");
-  }
-  ColorImage* picture = new ColorImage(width, height);
-  is.read((char*)picture->array,width*height);
-  return picture;
-}
+// ColorImage* ColorImage::readPGM(istream& is)
+// {
+//   string magic_number;
+//   is >> magic_number;
+//   if (magic_number != "P5")
+//   {
+//     throw runtime_error("Erreur (func ColorImage::readPGM) : Ce n'est pas un PGM [magic number != P5] !");
+//   }
+//   skip_line(is);
+//   skip_comments(is);
+//   uint16_t width, height;
+//   is >> width >> height;
+//   skip_line(is);
+//   skip_comments(is);
+//   unsigned short nu_grey;
+//   is >> nu_grey;
+//   if (nu_grey != 255)
+//   {
+//     throw runtime_error("Erreur (func ColorImage::readPGM) : La nuance de gris ne vaut pas 255");
+//   }
+//   ColorImage* picture = new ColorImage(width, height);
+//   is.read((char*)picture->array,width*height);
+//   return picture;
+// }
 
 void ColorImage::writePPM(ostream& os)const
 {
@@ -236,7 +237,7 @@ ColorImage *ColorImage::readPPM(istream & is)
     string line;
     getline(is,line);
     if (line != "P6")
-        throw runtime_error ("L'image n'est pas une PPM." );
+        throw runtime_error (" Erreur (func ColorImage::readPPM) : L'image n'est pas une PPM [magic number != P6] !" );
     skip_comments(is);
     uint16_t width,height;
     is >> width >> height;
@@ -245,16 +246,17 @@ ColorImage *ColorImage::readPPM(istream & is)
     uint16_t maxpixel;
     is >> maxpixel;
     if(maxpixel != 255)
-        throw runtime_error ("La precision maximal est depasse.");
+        throw runtime_error (" Erreur (func ColorImage::PPM) : La precision maximal est depasse.");
     is.get();
     ColorImage * C_ing= new ColorImage(width,height);
     is.read((char*)C_ing->array, width* height *3);
     return C_ing;
 }
 
-void ColorImage::clear(Color color) {
+void ColorImage::clear(Color color)
+{
     if(color <= 0 || color >= 255)
-        throw runtime_error("La valeur de la couleur doit etre comprise entre 0 et 255.");
+        throw runtime_error(" Erreur (func ColorImage::clear) : La valeur de la couleur doit etre comprise entre 0 et 255.");
     for(int i= 0; i < width*height; ++i)
         array[i]= color;
 }

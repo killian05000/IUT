@@ -2,6 +2,12 @@
 #include <cstdint>
 using namespace std;
 
+const char *const identifier = "wolfger_k";
+const char *const informations = "blablabla\n"
+                                 "c'est vraiment ouf ce tp.\n";
+
+//--------------------------------------GrayImage--------------------------------------//
+
 class GrayImage
 {
   private:
@@ -31,6 +37,8 @@ class GrayImage
     GrayImage* biScale(uint16_t w, uint16_t h) const;
 };
 
+//----------------------------------------Color----------------------------------------//
+
 class Color
 {
   private:
@@ -59,6 +67,7 @@ class Color
     friend Color operator+(const Color& c1, const Color& c2);
 };
 
+//--------------------------------------ColorImage--------------------------------------//
 
 class ColorImage
 {
