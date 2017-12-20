@@ -3,8 +3,12 @@
 using namespace std;
 
 const char *const identifier = "wolfger_k";
-const char *const informations = "blablabla\n"
-                                 "c'est vraiment ouf ce tp.\n";
+const char *const informations = "\n"
+                                 "Bonjour / bonsoir\n"
+                                 "Malgrès de longues heures passé dessus hier soir et les jours précédents je n'ai pas réussi à implémenter l'intégralité des fonctions demandés, mais j'ai quand même celles de bases. (certaines fonctions comme TGA et anaglyphe sont non fonctionelles et sont juste la pour la compilation)\n\n"
+                                 "En tout cas bon courage et bonne chance pour les corrections, bonne journée\n";
+
+
 
 //--------------------------------------GrayImage--------------------------------------//
 
@@ -96,8 +100,17 @@ class ColorImage
 
     static ColorImage* readPGM(istream& is);
     void writePGM(ostream& os) const;
-    static ColorImage *readPPM(std::istream & is); //permet de lire une image au format PPM
-    void writePPM(std::ostream &os) const; //fais une copie et créer une nouvelle image au format PPM
+    static ColorImage *readPPM(istream & is); //permet de lire une image au format PPM
+    void writePPM(ostream &os) const; //fais une copie et créer une nouvelle image au format PPM
+
+    ColorImage* simpleScale(uint16_t w, uint16_t h) const; // format de compression
+    ColorImage* bilinearScale(uint16_t w, uint16_t h) const; // format de compression censé plus efficace (problème sur la formule = même résultat)
+
+    static ColorImage* readTGA(istream& is);
+    void writeTGA(ostream &os, bool b) const;
+
+    static ColorImage* readMaison2(istream& is);
+    ColorImage* anaglyphe() const;
 
     void clear(Color color); // attribue à tous les pixels une couleur unique
 };

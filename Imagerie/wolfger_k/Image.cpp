@@ -149,6 +149,18 @@ Color::Color(uint8_t _r, uint8_t _g, uint8_t _b)
 Color::~Color()
 {}
 
+Color operator*(double alpha, const Color& color)
+{
+  Color c(color.r*alpha, color.g*alpha, color.b*alpha);
+  return c;
+}
+
+Color operator+(const Color& c1, const Color& c2)
+{
+  Color c(c1.r+c2.r, c1.g+c2.g, c1.b+c2.b);
+  return c;
+}
+
 //--------------------------------------ColorImage--------------------------------------//
 
 ColorImage::ColorImage(uint16_t w, uint16_t h)
@@ -259,4 +271,77 @@ void ColorImage::clear(Color color)
         throw runtime_error(" Erreur (func ColorImage::clear) : La valeur de la couleur doit etre comprise entre 0 et 255.");
     for(int i= 0; i < width*height; ++i)
         array[i]= color;
+}
+
+ColorImage* ColorImage::simpleScale(uint16_t w, uint16_t h) const
+{
+	ColorImage* img= new ColorImage(w,h);
+	for (uint16_t yp=0; yp<h; ++yp)
+		for(uint16_t xp=0; xp<w ; ++xp)
+    {
+
+			double x = double((xp*width)/w);
+			double y = double((yp*height)/h);
+
+			uint16_t xi = uint16_t(x);
+			uint16_t yi = uint16_t(y);
+
+			img -> pixel(xp,yp) = pixel(xi,yi);
+		}
+	return img;
+}
+
+ColorImage* ColorImage::bilinearScale(uint16_t w, uint16_t h) const
+{
+	ColorImage* img= new ColorImage(w,h);
+	for (uint16_t yp=0; yp<h; ++yp)
+		for(uint16_t xp=0; xp<w ; ++xp){
+
+			double x = double((xp*width)/w);
+			double y = double((yp*height)/h);
+
+			uint16_t xi = uint16_t(x);
+			uint16_t yi = uint16_t(y);
+
+			uint16_t x2 = (xi+1<width? xi+1:xi);
+			uint16_t y2 = (yi+1<height? yi+1:yi);
+
+			double lambda = x-xi;
+			double mu = y-yi;
+
+			img->pixel(xp,yp)=(1-lambda)*((1-mu)*pixel(xi,yi)+mu*pixel(xi,y2))+lambda*((1-mu)*pixel(x2,yi)+mu*pixel(x2,y2));
+		}
+	return img;
+}
+
+ColorImage* ColorImage::readTGA(istream& is)
+{
+  ColorImage* img= new ColorImage(100,100);
+  return img;
+}
+
+void ColorImage::writeTGA(ostream& os, bool b) const
+{}
+
+ColorImage* ColorImage::anaglyphe() const
+{
+  ColorImage* img= new ColorImage(100,100);
+  return img;
+}
+
+ColorImage* ColorImage::readMaison2(istream& is)
+{
+  skip_comments(is); // au cas ou
+  string line;
+  getline(is,line);
+  if (line != "Maison2")
+      throw runtime_error (" Erreur (func ColorImage::readMaison2) : L'image n'est pas une Maison2 [magic number != Maison2] !" );
+  skip_comments(is);
+  uint16_t width,height;
+  is >> height >> width;
+  is.get();
+  skip_comments(is);
+  ColorImage* img = new ColorImage(width, height);
+  is.read((char*)img->array, width*height *3);
+  return img;
 }

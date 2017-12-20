@@ -1,2 +1,8 @@
  
+Fais tourner read et write PPM/PGM, simple et bilinear scale
+
 g++ -Wall Image.cpp essai.cpp
+./a.out
+
+make correction.exe
+./correction.exe
