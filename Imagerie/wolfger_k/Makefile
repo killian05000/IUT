@@ -3,8 +3,8 @@ CXXFLAGS=-Wall -pedantic -std=c++14
 DEL=rm -f
 
 # Adaptez ces deux variables avec vos propres chemins s'ils sont différents :
-INCPATH_JPEG=
-LDPATH_JPEG=
+INCPATH_JPEG=chat.ppm
+LDPATH_JPEG=chat.pgm
 
 .PHONY: all clean
 
