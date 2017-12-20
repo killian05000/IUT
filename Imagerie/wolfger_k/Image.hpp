@@ -21,20 +21,22 @@ class GrayImage
     GrayImage(const GrayImage& orig);
     ~GrayImage();
 
+    // dessine le contour et remplis un rectangle, utilisé pour des test (voir compression)
     void rectangle(uint16_t x, uint16_t y, uint16_t w, uint16_t h, uint8_t color);
     void fillRectangle(uint16_t x, uint16_t y, uint16_t w, uint16_t h, uint8_t color);
 
+    //permet d'obtenir la largeur et la hauteur, paramètres important pour d'aures calculs (scale)
     inline const  uint16_t& getWidth() const { return width; }
     inline const  uint16_t& getHeight() const { return height; }
 
     inline uint8_t& pixel(uint16_t x, uint16_t y) { return array[y*width+x]; }
     inline const uint8_t& pixel(uint16_t x, uint16_t y) const { return  array[y*width+x]; }
 
-    static GrayImage* readPGM(istream& is);
-    void writePGM(ostream& os)const;
+    static GrayImage* readPGM(istream& is); // permet de lire une image de type PGM
+    void writePGM(ostream& os)const; // permet de faire une copie et de créer une nouvelle instance PGM
 
-    GrayImage* simpleScale(uint16_t w, uint16_t h) const;
-    GrayImage* biScale(uint16_t w, uint16_t h) const;
+    GrayImage* simpleScale(uint16_t w, uint16_t h) const; // format de compression
+    GrayImage* biScale(uint16_t w, uint16_t h) const; // format de compression censé plus efficace (problème sur la formule = même résultat)
 };
 
 //----------------------------------------Color----------------------------------------//
@@ -82,6 +84,7 @@ class ColorImage
     ColorImage(const ColorImage& orig);
     ~ColorImage();
 
+    //permet d'obtenir la largeur et la hauteur, paramètres important pour d'aures calculs (scale)
     inline const  uint16_t& getWidth() const { return width; }
     inline const  uint16_t& getHeight() const { return height; }
 
@@ -93,8 +96,8 @@ class ColorImage
 
     static ColorImage* readPGM(istream& is);
     void writePGM(ostream& os) const;
-    static ColorImage *readPPM(std::istream & is);
-    void writePPM(std::ostream &os) const;
+    static ColorImage *readPPM(std::istream & is); //permet de lire une image au format PPM
+    void writePPM(std::ostream &os) const; //fais une copie et créer une nouvelle image au format PPM
 
-    void clear(Color color);
+    void clear(Color color); // attribue à tous les pixels une couleur unique
 };
