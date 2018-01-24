@@ -14,7 +14,7 @@
 // Compilation sous Windows :
 //   g++ -Wall maison.cpp -o maison.exe -lfreeglut -lglu32 -lopengl32
 // Compilation sous Linux :
-//   g++ -Wall maison.cpp -o maison.exe -lfreeglut -lGLU -lGL
+//   g++ -Wall maison.cpp -o maison.exe -lglut -lGLU -lGL
 ///////////////////////////////////////////////////////////////////////////////
 
 #include <stdio.h>
