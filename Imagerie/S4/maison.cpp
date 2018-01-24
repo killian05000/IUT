@@ -60,6 +60,42 @@ int		mouse_x = 0, mouse_y = 0;						// Position de la souris
 //    _
 ///////////////////////////////////////////////////////////////////////////////
 
+class Texture
+{
+	public:
+		GLuint id;
+		int width, height;
+
+	private:
+		bool charger(char* file_name);
+		void define();
+		void define_filter();
+		void define_looping();
+};
+
+Texture::charger(char* file_name)
+{
+	img = stbi_load(file_name, &width, &height, &opp, 0);
+	//glGenTextures(GLuint n, GLuint *tab_text);
+}
+
+Texture::define()
+{
+
+}
+
+Texture::define_filter()
+{
+
+}
+
+Texture::define_looping()
+{
+
+
+}
+
+
 float dir[4] = {2, 5, 2, 1};
 
 void affiche_lumiere()
