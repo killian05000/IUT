@@ -22,6 +22,7 @@
 #include <math.h>
 
 #include <GL/glut.h>
+#include "stb_image.h"
 
 #define WIDTH   800										// Largeur de la fenêtre OpenGL
 #define HEIGHT  600										// Hauteur de la fenêtre OpenGl
@@ -65,16 +66,17 @@ class Texture
 	public:
 		GLuint id;
 		int width, height;
+		stbi_uc *img;
 
 	private:
 		bool charger(char* file_name);
 		void define();
-		void define_filter(GLint mod_min, GLint, mod_mag);
+		void define_filter(GLint mod_min, GLint mod_mag);
 		void define_looping(GLint mode_axe_s, GLint mode_axe_t);
 		void define_mixttng(GLint mode);
 };
 
-bool charger(char* file_name)
+bool Texture::charger(char* file_name)
 {
 	glGenTextures(1, &id); // definit l'id pour la texture
 
@@ -90,26 +92,26 @@ bool charger(char* file_name)
 	}
 }
 
-void define()
+void Texture::define()
 { 
 	glBindTexture(GL_TEXTURE_2D, id);
 }
 
-void define_filter(GLint mod_min, GLint, mod_mag)
+void Texture::define_filter(GLint mod_min, GLint, mod_mag)
 {
 	define();
 	glTextParametri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, mod_min);
 	glTextParametri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, mod_max);
 }
 
-void define_looping(GLint mode_axe_s, GLint mode_axe_t)
+void Texture::define_looping(GLint mode_axe_s, GLint mode_axe_t)
 {
 	define();
 	glTexParametri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, mode_axe_s);
 	glTexParametri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, mode_axe_t);
 }
 
-void define_mixting(GLint mode)
+void Texture::define_mixting(GLint mode)
 {
 	define();
 	glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, mode);
@@ -270,7 +272,7 @@ void affiche_maison( float xp, float yp, float zp, float yr )
 	glEnable(GL_FOG);*/
 
 	glEnable(GL_TEXTURE_2D);
-	
+
 	glBegin(GL_TRIANGLES);
 	glTexCoord2f(0.0f,0.0f);
 	glVertex3f(4.0f, 5.0f, 0.0f);
@@ -279,7 +281,7 @@ void affiche_maison( float xp, float yp, float zp, float yr )
 	glTexCoord2f(0.0f,1.0f);
 	glVertex3f(4.0f, 12.0f, 0.0f);
 	glEnd();
-
+ 
 	// Mur de face
 	glNormal3f(0,0,1);
 	glBegin(GL_QUADS);
