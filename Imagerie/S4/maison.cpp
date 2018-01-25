@@ -69,8 +69,9 @@ class Texture
 	private:
 		bool charger(char* file_name);
 		void define();
-		void define_filter();
-		void define_looping();
+		void define_filter(GLint mod_min, GLint, mod_mag);
+		void define_looping(GLint mode_axe_s, GLint mode_axe_t);
+		void define_mixttng(GLint mode);
 };
 
 bool charger(char* file_name)
@@ -79,8 +80,14 @@ bool charger(char* file_name)
 
 	img = stbi_load(file_name, &width, &height, &opp, 0); // On charge l'image
 
-	glBindTexture(GL_TEXTURE_2D, id); // fixe l'indice de la texture courante
-	glTexImage2D(GL_TEXTURE_2D, 0, 3, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, img);
+	if (img!=NULL)
+	{
+
+		glBindTexture(GL_TEXTURE_2D, id); // fixe l'indice de la texture courante
+		glTexImage2D(GL_TEXTURE_2D, 0, 3, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, img);
+
+		delete [] img;
+	}
 }
 
 void define()
@@ -91,15 +98,21 @@ void define()
 void define_filter(GLint mod_min, GLint, mod_mag)
 {
 	define();
-	glTextParametri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTextParametri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTextParametri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, mod_min);
+	glTextParametri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, mod_max);
 }
 
-void define_looping()
+void define_looping(GLint mode_axe_s, GLint mode_axe_t)
 {
 	define();
-	glTexParametri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-	glTexParametri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);d
+	glTexParametri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, mode_axe_s);
+	glTexParametri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, mode_axe_t);
+}
+
+void define_mixting(GLint mode)
+{
+	define();
+	glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, mode);
 }
 
 
@@ -255,6 +268,17 @@ void affiche_maison( float xp, float yp, float zp, float yr )
 	glFogf(GL_FOG_DENSITY, 1.0f);// défaut : 1.0f
 	glFogfv(GL_FOG_COLOR, fogColor);
 	glEnable(GL_FOG);*/
+
+	glEnable(GL_TEXTURE_2D);
+	
+	glBegin(GL_TRIANGLES);
+	glTexCoord2f(0.0f,0.0f);
+	glVertex3f(4.0f, 5.0f, 0.0f);
+	glTexCoord2f(1.0f,0.0f);
+	glVertex3f(10.0f, 5.0f, 0.0f);
+	glTexCoord2f(0.0f,1.0f);
+	glVertex3f(4.0f, 12.0f, 0.0f);
+	glEnd();
 
 	// Mur de face
 	glNormal3f(0,0,1);
