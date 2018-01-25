@@ -73,26 +73,33 @@ class Texture
 		void define_looping();
 };
 
-Texture::charger(char* file_name)
+bool charger(char* file_name)
 {
-	img = stbi_load(file_name, &width, &height, &opp, 0);
-	//glGenTextures(GLuint n, GLuint *tab_text);
+	glGenTextures(1, &id); // definit l'id pour la texture
+
+	img = stbi_load(file_name, &width, &height, &opp, 0); // On charge l'image
+
+	glBindTexture(GL_TEXTURE_2D, id); // fixe l'indice de la texture courante
+	glTexImage2D(GL_TEXTURE_2D, 0, 3, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, img);
 }
 
-Texture::define()
-{
-
+void define()
+{ 
+	glBindTexture(GL_TEXTURE_2D, id);
 }
 
-Texture::define_filter()
+void define_filter(GLint mod_min, GLint, mod_mag)
 {
-
+	define();
+	glTextParametri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTextParametri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 }
 
-Texture::define_looping()
+void define_looping()
 {
-
-
+	define();
+	glTexParametri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParametri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);d
 }
 
 
