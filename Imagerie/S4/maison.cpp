@@ -1,21 +1,11 @@
 ///////////////////////////////////////////////////////////////////////////////
-// IUT d'Aix-Marseille Université, site d'Arles
-// Département Informatique
-// 2ème année
-// ----------------------------------------------------------------------------
-// IN - Synthèse d'images - Rendu réaliste
-// Auteur : Sébastien Thon
-// ----------------------------------------------------------------------------
-// Base du TP 1
-// Base d'un programme permettant d'afficher une scène composée d'un sol, de
-// maisons et d'arbres. On placera des sources de lumière, on spécifiera les
-// matériaux des différents objets et on utilisera un effet de brouillard.
-// ----------------------------------------------------------------------------
 // Compilation sous Windows :
 //   g++ -Wall maison.cpp -o maison.exe -lfreeglut -lglu32 -lopengl32
 // Compilation sous Linux :
 //   g++ -Wall maison.cpp -o maison.exe -lglut -lGLU -lGL
 ///////////////////////////////////////////////////////////////////////////////
+
+#define STB_IMAGE_IMPLEMENTATION
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -23,6 +13,9 @@
 
 #include <GL/glut.h>
 #include "stb_image.h"
+#include <iostream>
+
+using namespace std;
 
 #define WIDTH   800										// Largeur de la fenêtre OpenGL
 #define HEIGHT  600										// Hauteur de la fenêtre OpenGl
@@ -63,33 +56,51 @@ int		mouse_x = 0, mouse_y = 0;						// Position de la souris
 
 class Texture
 {
-	public:
+	private:
 		GLuint id;
 		int width, height;
 		stbi_uc *img;
 
-	private:
-		bool charger(char* file_name);
+	public:
+		bool charger(string file_name);
 		void define();
 		void define_filter(GLint mod_min, GLint mod_mag);
 		void define_looping(GLint mode_axe_s, GLint mode_axe_t);
-		void define_mixttng(GLint mode);
+		void define_mixting(GLint mode);
+		void set_default();
 };
 
-bool Texture::charger(char* file_name)
+bool Texture::charger(string file_name)
 {
 	glGenTextures(1, &id); // definit l'id pour la texture
 
-	img = stbi_load(file_name, &width, &height, &opp, 0); // On charge l'image
+	set_default();
+
+	int comp;
+	img = stbi_load(file_name.c_str(), &width, &height, &comp, 0); // On charge l'image
 
 	if (img!=NULL)
 	{
+		GLenum format;
+		switch (comp)
+		{
+			case 3:
+				format = GL_RGB;
+				break;
+
+			case 4:
+				format = GL_RGBA;
+				break;
+			return false;
+		}
 
 		glBindTexture(GL_TEXTURE_2D, id); // fixe l'indice de la texture courante
-		glTexImage2D(GL_TEXTURE_2D, 0, 3, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, img);
+		glTexImage2D(GL_TEXTURE_2D, 0, comp, width, height, 0, format, GL_UNSIGNED_BYTE, img);
 
 		delete [] img;
+		return true;
 	}
+	return false;
 }
 
 void Texture::define()
@@ -97,18 +108,18 @@ void Texture::define()
 	glBindTexture(GL_TEXTURE_2D, id);
 }
 
-void Texture::define_filter(GLint mod_min, GLint, mod_mag)
+void Texture::define_filter(GLint mod_min, GLint mod_mag)
 {
 	define();
-	glTextParametri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, mod_min);
-	glTextParametri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, mod_max);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, mod_min);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, mod_mag);
 }
 
 void Texture::define_looping(GLint mode_axe_s, GLint mode_axe_t)
 {
 	define();
-	glTexParametri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, mode_axe_s);
-	glTexParametri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, mode_axe_t);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, mode_axe_t);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, mode_axe_s);
 }
 
 void Texture::define_mixting(GLint mode)
@@ -117,22 +128,61 @@ void Texture::define_mixting(GLint mode)
 	glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, mode);
 }
 
+void Texture::set_default()
+{
+	define();
+	define_filter(GL_LINEAR, GL_LINEAR); // GL_LINEAR ou GL_NEAREST
+	define_looping(GL_REPEAT, GL_REPEAT); // GL_REPEAT ou GL_CLIMB
+	define_mixting(GL_DECAL);
+}
+
+void setColor(int r, int g, int b)
+{
+	GLfloat MatAmbient[4] = {r/255.f, g/255.f, b/255.f, 1.0f};
+	GLfloat MatDiffuse[4] = {MatAmbient[1]/2.f, MatAmbient[2]/2.2f, MatAmbient[3]/2.f, 1.0f};
+	GLfloat MatSpecular[4] = {0.2f,0.2f, 0.2f, 1.0f};
+	GLfloat MatShininess[] = { 5.0F };
+
+	glMaterialfv(GL_FRONT, GL_AMBIENT, MatAmbient);
+	glMaterialfv(GL_FRONT, GL_DIFFUSE, MatDiffuse);
+	glMaterialfv(GL_FRONT, GL_SPECULAR, MatSpecular);
+	glMaterialfv(GL_FRONT, GL_SHININESS, MatShininess);
+}
+
 
 float dir[4] = {2, 5, 2, 1};
 
 void affiche_lumiere()
 {
+	setColor(255,224,0);
 	glPushMatrix();
 	glTranslatef(dir[0], dir[1], dir[2]);
 	glutSolidSphere(1, 20, 20);
 	glPopMatrix();
 }
 
+Texture texture_test;
+Texture texture_facade;
+Texture texture_mur;
+Texture texture_sol;
+Texture texture_toit;
+
+
+
 GLvoid initGL()
 {
+
+	texture_facade.charger("textures/facade.png");
+	texture_mur.charger("textures/mur.png");
+	texture_sol.charger("textures/sol.png");
+	texture_test.charger("textures/test.png");
+	texture_toit.charger("textures/toit.png");
+
+
+
 	glClearColor(0, 0, 0, 1);							// Couleur servant à effacer la fenêtre (noir)
     glShadeModel(GL_SMOOTH);							// Modèle d'ombrage : lissage de Gouraud
-	glEnable(GL_CULL_FACE);								// Ne traite pas les faces cachées
+	//glEnable(GL_CULL_FACE);								// Ne traite pas les faces cachées
 	glEnable(GL_DEPTH_TEST);							// Active le Z-Buffer
 	glDepthFunc(GL_LEQUAL);								// Mode de fonctionnement du Z-Buffer
 	glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);	// Active la correction de perspective (pour ombrage, texture, ...)
@@ -155,33 +205,33 @@ GLvoid initGL()
 
 
 	//sol ???
-/*	GLfloat Light0Amb[4] = {1.0f, 1.0f, 1.0f, 1.0f};
-	GLfloat Light0Dif[4] = {1.0f, 1.0f, 1.0f, 1.0f}; 
-	GLfloat Light0Spec[4]= {1.0f, 1.0f, 1.0f, 1.0f};  
-	GLfloat Light0Pos[4] = {5.0f, 20.0f, 10.0f, 1.0f};
+	// GLfloat Light0Amb[4] = {1.0f, 1.0f, 1.0f, 1.0f};
+	// GLfloat Light0Dif[4] = {1.0f, 1.0f, 1.0f, 1.0f}; 
+	// GLfloat Light0Spec[4]= {1.0f, 1.0f, 1.0f, 1.0f};  
+	// GLfloat Light0Pos[4] = {5.0f, 20.0f, 10.0f, 1.0f};
 
 
-	glLightfv(GL_LIGHT0, GL_AMBIENT, Light0Amb);
-	glLightfv(GL_LIGHT0, GL_DIFFUSE, Light0Dif);
-	glLightfv(GL_LIGHT0, GL_SPECULAR, Light0Spec); 
-	glLightfv(GL_LIGHT0, GL_POSITION, Light0Pos);
-	glEnable(GL_LIGHTING);
-	glEnable(GL_LIGHT0);
+	// glLightfv(GL_LIGHT0, GL_ AMBIENT, Light0Amb);
+	// glLightfv(GL_LIGHT0, GL_DIFFUSE, Light0Dif);
+	// glLightfv(GL_LIGHT0, GL_SPECULAR, Light0Spec); 
+	// glLightfv(GL_LIGHT0, GL_POSITION, Light0Pos);
+	// glEnable(GL_LIGHTING);
+	// glEnable(GL_LIGHT0);
 
-	glDisable(GL_LIGHT0);*/
+	// glDisable(GL_LIGHT0);
 
 
 
 	GLfloat Light0Amb[4] = {0.5f, 0.5f, 0.5f, 1.0f};
-	GLfloat Light0Dif[4] = {1.0f, 1.0f, 1.0f, 1.0f}; 
+	GLfloat Light0Dif[4] = {1.0f, 1.0f, 1.0f, 1.0f}; // intensité de l'eclairage
 	GLfloat Light0Spec[4]= {0.2, 0.2, 0.2, 1.0f};  
 
-glLightfv(GL_LIGHT0, GL_AMBIENT, Light0Amb);
-glLightfv(GL_LIGHT0, GL_DIFFUSE, Light0Dif);
-glLightfv(GL_LIGHT0, GL_SPECULAR, Light0Spec); 
-glLightfv(GL_LIGHT0, GL_POSITION, dir);
-glEnable(GL_LIGHTING);
-glEnable(GL_LIGHT0);
+	glLightfv(GL_LIGHT0, GL_AMBIENT, Light0Amb);
+	glLightfv(GL_LIGHT0, GL_DIFFUSE, Light0Dif);
+	glLightfv(GL_LIGHT0, GL_SPECULAR, Light0Spec); 
+	glLightfv(GL_LIGHT0, GL_POSITION, dir);
+	glEnable(GL_LIGHTING);
+	glEnable(GL_LIGHT0);
 }
 
 
@@ -202,23 +252,22 @@ void affiche_sol()
 	//* crée pour le sol (utiliser glMaterialfv() pour les paramètres
 	//* ambiant, diffus, speculaire du matériau du sol).
 	//*****************************************************************
-	GLfloat MatAmbient[4] = {1.0f, 0.5f, 0.25f, 1.0f};
-	GLfloat MatDiffuse[4] = {0.5f, 0.25f, 0.125f, 1.0f};
-	GLfloat MatSpecular[4] = {0.2f,0.2f, 0.2f, 1.0f};
-	GLfloat MatShininess[] = { 5.0F };
 
-	glMaterialfv(GL_FRONT, GL_AMBIENT, MatAmbient);
-	glMaterialfv(GL_FRONT, GL_DIFFUSE, MatDiffuse);
-	glMaterialfv(GL_FRONT, GL_SPECULAR, MatSpecular);
-	glMaterialfv(GL_FRONT, GL_SHININESS, MatShininess);
+	glEnable(GL_TEXTURE_2D);
+	texture_sol.define();
 
 	glBegin(GL_QUADS);									// Affichage d'un quadrilatère
+		glTexCoord2f(0.0f, 0.0f);
 		glVertex3d(-20, 0, -20);
+		glTexCoord2f(0.0f, 10.0f);
 		glVertex3d(-20, 0,  20);
+		glTexCoord2f(10.0f, 10.0f);
 		glVertex3d( 20, 0,  20);
+		glTexCoord2f(10.0f, 0.0f);
 		glVertex3d( 20, 0, -20);
 	glEnd();
 
+	glDisable(GL_TEXTURE_2D);
 
 }
 
@@ -233,6 +282,8 @@ void affiche_sol()
 // Retour :
 //    _
 ///////////////////////////////////////////////////////////////////////////////
+
+
 void affiche_maison( float xp, float yp, float zp, float yr )
 {
 	glPushMatrix();										// Sauve la matrice de vue actuelle
@@ -254,120 +305,146 @@ void affiche_maison( float xp, float yp, float zp, float yr )
 	//* crée pour les murs (utiliser glMaterialfv() pour les paramètres
 	//* ambiant, diffus, speculaire du matériau du mur).
 	//*****************************************************************
+ 
 
-	GLfloat MatAmbient1[4] = {0.52f, 0.52f, 0.52f, 1.0f};
-	GLfloat MatDiffuse1[4] = {0.26f, 0.26f, 0.26f, 1.0f};
-	GLfloat MatSpecular1[4] = {0.2f,0.2f, 0.2, 1.0f};
-	GLfloat MatShininess1[] = { 5.0F };
-
-	glMaterialfv(GL_FRONT, GL_AMBIENT, MatAmbient1);
-	glMaterialfv(GL_FRONT, GL_DIFFUSE, MatDiffuse1);
-	glMaterialfv(GL_FRONT, GL_SPECULAR, MatSpecular1);
-	glMaterialfv(GL_FRONT, GL_SHININESS, MatShininess1);
-
-/*	GLfloat fogColor[4]= {0.4f,0.4f,0.4f,0.0f};
-	glFogf(GL_FOG_MODE, GL_EXP);// ou GL_EXP2
-	glFogf(GL_FOG_DENSITY, 1.0f);// défaut : 1.0f
-	glFogfv(GL_FOG_COLOR, fogColor);
-	glEnable(GL_FOG);*/
+	// Mur de face
 
 	glEnable(GL_TEXTURE_2D);
+ 	texture_mur.define();
 
-	glBegin(GL_TRIANGLES);
-	glTexCoord2f(0.0f,0.0f);
-	glVertex3f(4.0f, 5.0f, 0.0f);
-	glTexCoord2f(1.0f,0.0f);
-	glVertex3f(10.0f, 5.0f, 0.0f);
-	glTexCoord2f(0.0f,1.0f);
-	glVertex3f(4.0f, 12.0f, 0.0f);
-	glEnd();
- 
-	// Mur de face
 	glNormal3f(0,0,1);
 	glBegin(GL_QUADS);
+		glTexCoord2f(0.0f,0.0f);
 		glVertex3d(-4, 5, 5);
+		glTexCoord2f(0.0f,1.0f);
 		glVertex3d(-4, 0, 5);
+		glTexCoord2f(1.0f,1.0f);
 		glVertex3d( 4, 0, 5);
+		glTexCoord2f(1.0f,0.0f);
 		glVertex3d( 4, 5, 5);
 	glEnd();
 
+
 	// Mur arrière
+
 	glNormal3f(0,0,-1);
 	glBegin(GL_QUADS);
+		glTexCoord2f(0.0f,0.0f);
 		glVertex3d( 4, 5, -5);
+		glTexCoord2f(0.0f,1.0f);
 		glVertex3d( 4, 0, -5);
+		glTexCoord2f(1.0f,1.0f);
 		glVertex3d(-4, 0, -5);
+		glTexCoord2f(1.0f,0.0f);
 		glVertex3d(-4, 5, -5);
-	glEnd();
-
-	// Mur gauche
-	glNormal3f(-1,0,0);
-	glBegin(GL_QUADS);
-		glVertex3d(-4, 5, -5);
-		glVertex3d(-4, 0, -5);
-		glVertex3d(-4, 0,  5);
-		glVertex3d(-4, 5,  5);
 	glEnd();
 
 	// Mur droit
+
 	glNormal3f(1,0,0);
 	glBegin(GL_QUADS);
+		glTexCoord2f(0.0f,0.0f);
 		glVertex3d(4, 5,  5);
+		glTexCoord2f(0.0f,1.0f);
 		glVertex3d(4, 0,  5);
+		glTexCoord2f(2.0f,1.0f);
 		glVertex3d(4, 0, -5);
+		glTexCoord2f(2.0f,0.0f);
 		glVertex3d(4, 5, -5);
 	glEnd();
 
+	glDisable(GL_TEXTURE_2D);
+
+	// Mur gauche
+
+	glEnable(GL_TEXTURE_2D);
+	texture_facade.define();
+
+	glNormal3f(-1,0,0);
+	glBegin(GL_QUADS);
+		glTexCoord2f(0.0f,0.0f);
+		glVertex3d(-4, 5, -5);
+		glTexCoord2f(0.0f,1.0f);
+		glVertex3d(-4, 0, -5);
+		glTexCoord2f(1.0f,1.0f);
+		glVertex3d(-4, 0,  5);
+		glTexCoord2f(1.0f,0.0f);
+		glVertex3d(-4, 5,  5);
+	glEnd();
+
+	glDisable(GL_TEXTURE_2D);
+
+
 	// Triangle avant
+
+	glEnable(GL_TEXTURE_2D);
+	texture_mur.define();
+
 	glNormal3f(0,0,1);
 	glBegin(GL_TRIANGLES);
+		glTexCoord2f(0.5f,0.1f);
 		glVertex3d( 0, 9, 5);
+		glTexCoord2f(0.0f,1.0f);
 		glVertex3d(-4, 5, 5);
+		glTexCoord2f(1.0f,1.0f);
 		glVertex3d( 4, 5, 5);
 	glEnd();
 
+	glDisable(GL_TEXTURE_2D);
+
 	// Triangle arrière
+
+	glEnable(GL_TEXTURE_2D);
+	texture_mur.define();
+
 	glNormal3f(0,0,-1);
 	glBegin(GL_TRIANGLES);
+		glTexCoord2f(0.5f,0.1f);
 		glVertex3d( 0, 9, -5);
+		glTexCoord2f(0.0f,1.0f);
 		glVertex3d( 4, 5, -5);
+		glTexCoord2f(1.0f,1.0f);
 		glVertex3d(-4, 5, -5);
 	glEnd();
 
-//*****************************************************************
-//* A FAIRE :
-//* Remplacer le glColor3f() suivant par l'utilisation du matériau
-//* crée pour le toit (utiliser glMaterialfv() pour les paramètres
-//* ambiant, diffus, speculaire du matériau du toit).
-//*****************************************************************
+	glDisable(GL_TEXTURE_2D);
 
-	GLfloat MatAmbient[4] = {0.43f, 0.25f, 0.08f, 1.0f};
-	GLfloat MatDiffuse[4] = {0.215f, 0.125f, 0.04f, 1.0f};
-	GLfloat MatSpecular[4] = {0.2f,0.2f, 0.2f, 1.0f};
-	GLfloat MatShininess[] = { 1000.0F };
-
-	glMaterialfv(GL_FRONT, GL_AMBIENT, MatAmbient);
-	glMaterialfv(GL_FRONT, GL_DIFFUSE, MatDiffuse);
-	glMaterialfv(GL_FRONT, GL_SPECULAR, MatSpecular);
-	glMaterialfv(GL_FRONT, GL_SHININESS, MatShininess);
+	glEnable(GL_TEXTURE_2D);
+	texture_toit.define();
 
 	// Toit versant droit
 	glNormal3f(0.707,0.707,0);
 	glBegin(GL_QUADS);
+		glTexCoord2f(0.0f, 0.0f);
 		glVertex3d(0, 9,  5);
+		glTexCoord2f(0.0f, 1.0f);
 		glVertex3d(4, 5,  5);
+		glTexCoord2f(2.0f, 1.0f);
 		glVertex3d(4, 5, -5);
+		glTexCoord2f(2.0f, 0.0f);
 		glVertex3d(0, 9, -5);
 	glEnd();
+
+	glDisable(GL_TEXTURE_2D);
+
+
+	glEnable(GL_TEXTURE_2D);
+	texture_toit.define();
 
 	// Toit versant gauche
 	glNormal3f(-0.707,0.707,0);
 	glBegin(GL_QUADS);
+		glTexCoord2f(0.0f, 0.0f);
 		glVertex3d( 0, 9, -5);
+		glTexCoord2f(0.0f, 1.0f);
 		glVertex3d(-4, 5, -5);
+		glTexCoord2f(2.0f, 1.0f);
 		glVertex3d(-4, 5,  5);
+		glTexCoord2f(2.0f, 0.0f);
 		glVertex3d( 0, 9,  5);
 	glEnd();
+
+	glDisable(GL_TEXTURE_2D);
 
 
 	glPopMatrix();										// Restaure la matrice de vue
@@ -378,31 +455,21 @@ void affiche_arbre(int x, int y, int z)
 	glTranslatef(x, y, z);
 	glRotatef(90, -1, 0, 0);
 	
-	GLfloat MatAmbient2[4] = {0.25f, 0.10f, 0.0f, 1.0f};
-	GLfloat MatDiffuse2[4] = {0.125f, 0.05f, 0.0f, 1.0f};
-	GLfloat MatSpecular2[4] = {0.2f,0.2f, 0.2f, 1.0f};
-	GLfloat MatShininess2[] = { 5.0F };
-
-	glMaterialfv(GL_FRONT, GL_AMBIENT, MatAmbient2);
-	glMaterialfv(GL_FRONT, GL_DIFFUSE, MatDiffuse2);
-	glMaterialfv(GL_FRONT, GL_SPECULAR, MatSpecular2);
-	glMaterialfv(GL_FRONT, GL_SHININESS, MatShininess2);
-
+	// Tronc
+	setColor(80,55,0);
 	glutSolidCone(1, 10,80,100);
 
-	glTranslatef(0, 0, 8);
+	glTranslatef(0, 0, 3);
 
-	GLfloat MatAmbient3[4] = {0.1f, 1.0f, 1.0f, 1.0f};
-	GLfloat MatDiffuse3[4] = {0.25f, 0.1f, 0.125f, 1.0f};
-	GLfloat MatSpecular3[4] = {0.2f,0.2f, 0.2f, 1.0f};
-	GLfloat MatShininess3[] = { 5.0F };
+	//cone 1
+	setColor(15, 105, 0);
+	glutSolidCone(2, 8, 400, 700);
 
-	glMaterialfv(GL_FRONT, GL_AMBIENT, MatAmbient3);
-	glMaterialfv(GL_FRONT, GL_DIFFUSE, MatDiffuse3);
-	glMaterialfv(GL_FRONT, GL_SPECULAR, MatSpecular3);
-	glMaterialfv(GL_FRONT, GL_SHININESS, MatShininess3);
+	glTranslatef(0, 0, 4);
 
-	glutSolidSphere(2, 20,100);
+	//cone 2
+	setColor(15, 105, 0);
+	glutSolidCone(1.5, 6, 10, 50);
 }
 
 
@@ -427,17 +494,11 @@ void affiche_arbre(int x, int y, int z)
 ///////////////////////////////////////////////////////////////////////////////
 void affiche_scene()
 {
-	affiche_sol();								// On affiche le sol.
+	affiche_sol();								
 
-	//*****************************************************************
-	//* A FAIRE :
-	//* Afficher quelques maisons et quelques arbres.
-	//*
-	//* Par exemple, on affiche ici une maison en (0,0,0),
-	//* tournée de 20° :
-	//*****************************************************************
-	affiche_maison( -10, 0, 0, 20 );
-	affiche_maison( 8, 0, 8, -40 );
+	affiche_maison( -4, 0, -9, 110 );
+	affiche_maison( 10, 0, 0, 0 );
+	affiche_maison( -5, 0, 8, -120 );
 
 	affiche_arbre(0, 0, 0);
 
@@ -526,17 +587,17 @@ GLvoid callback_keyboard(unsigned char key, int x, int y)
 		case KEY_ESC:						// 'ECHAP' :
 			exit(1);						// on quitte le programme
 			break;
-		case 'a':
+		case 'q':
 			dir[0]--;
 			glutPostRedisplay();
 			break;
 
-		case 'z':
+		case 'd':
 			dir[0]++;
 			glutPostRedisplay();
 			break;
 
-		case 'q':
+		case 'z':
 		dir[1]++;
 		glutPostRedisplay();
 		break;
@@ -546,12 +607,12 @@ GLvoid callback_keyboard(unsigned char key, int x, int y)
 		glutPostRedisplay();
 		break;
 
-		case 'e':
+		case 'a':
 		dir[2]++;
 		glutPostRedisplay();
 		break;
 
-		case 'd':
+		case 'e':
 		dir[2]--;
 		glutPostRedisplay();
 		break;
