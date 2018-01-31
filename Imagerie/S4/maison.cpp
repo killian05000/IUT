@@ -54,6 +54,8 @@ int		mouse_x = 0, mouse_y = 0;						// Position de la souris
 //    _
 ///////////////////////////////////////////////////////////////////////////////
 
+////////////////////////////////// TEXTURE //////////////////////////////////
+
 class Texture
 {
 	private:
@@ -133,13 +135,84 @@ void Texture::set_default()
 	define();
 	define_filter(GL_LINEAR, GL_LINEAR); // GL_LINEAR ou GL_NEAREST
 	define_looping(GL_REPEAT, GL_REPEAT); // GL_REPEAT ou GL_CLIMB
-	define_mixting(GL_DECAL);
+	define_mixting(GL_MODULATE); // GL_DECAL ou GL_MODULATE (permet l'illumination)
 }
+
+Texture texture_test;
+Texture texture_facade;
+Texture texture_mur;
+Texture texture_sol;
+Texture texture_toit;
+Texture texture_fumee;
+
+//////////////////////////////// END_TEXTURE ////////////////////////////////
+
+/////////////////////////////////// PUFF ////////////////////////////////////
+
+class Puff
+{
+	private:
+		GLfloat size;
+		GLfloat xpos, ypos, zpos;	
+		GLfloat speed_x, speed_y, speed_z;
+		GLfloat life_time;
+
+	public:
+		inline Puff(GLfloat s, GLfloat x, GLfloat y, GLfloat z, GLfloat sx, GLfloat sy, GLfloat sz, GLfloat lt)
+				: size(s), xpos(x), ypos(y), zpos(z), speed_x(sx), speed_y(sy), speed_z(sz), life_time(lt) {}
+
+		inline Puff(GLfloat s, GLfloat x, GLfloat y, GLfloat z, GLfloat lt)
+				: size(s), xpos(x), ypos(y), zpos(z), speed_x(1), speed_y(1), speed_z(1), life_time(lt) {}
+
+		void play(GLfloat time);
+		void display(float xp, float yp, float zp, float yr);
+};
+
+void Puff::play(GLfloat time)
+{
+	xpos = xpos*speed_x;
+	ypos = ypos*speed_y;
+	zpos = zpos*speed_z;
+	life_time -= time;
+}
+
+void Puff::display(float xp, float yp, float zp, float yr)
+{
+	glPushMatrix();										// Sauve la matrice de vue actuelle
+	glTranslatef(xp, yp, zp);							// Positionne la fumee avec une translation
+	glRotatef(yr, 0,1,0);								// et une rotation
+
+	glNormal3f(0,1,0);
+
+	glEnable(GL_TEXTURE_2D);
+ 	texture_fumee.define();
+
+	glNormal3f(0,0,1);
+	glBegin(GL_QUADS);
+		glTexCoord2f(0.0f,0.0f);
+		glVertex3d(-4, 5, 5);
+		glTexCoord2f(0.0f,1.0f);
+		glVertex3d(-4, 0, 5);
+		glTexCoord2f(1.0f,1.0f);
+		glVertex3d( 4, 0, 5);
+		glTexCoord2f(1.0f,0.0f);
+		glVertex3d( 4, 5, 5);
+	glEnd();
+
+	glDisable(GL_TEXTURE_2D);
+
+	glPushMatrix();
+
+}
+
+///////////////////////////////// END_PUFF //////////////////////////////////
+
+////////////////////////////////// TOOLBOX //////////////////////////////////
 
 void setColor(int r, int g, int b)
 {
 	GLfloat MatAmbient[4] = {r/255.f, g/255.f, b/255.f, 1.0f};
-	GLfloat MatDiffuse[4] = {MatAmbient[1]/2.f, MatAmbient[2]/2.2f, MatAmbient[3]/2.f, 1.0f};
+	GLfloat MatDiffuse[4] = {MatAmbient[0]/2.f, MatAmbient[1]/2.f, MatAmbient[2]/2.f, 1.0f};
 	GLfloat MatSpecular[4] = {0.2f,0.2f, 0.2f, 1.0f};
 	GLfloat MatShininess[] = { 5.0F };
 
@@ -149,25 +222,19 @@ void setColor(int r, int g, int b)
 	glMaterialfv(GL_FRONT, GL_SHININESS, MatShininess);
 }
 
+//////////////////////////////// END_TOOLBOX ////////////////////////////////
+
 
 float dir[4] = {2, 5, 2, 1};
 
 void affiche_lumiere()
 {
-	setColor(255,224,0);
+	setColor(255,255,255);
 	glPushMatrix();
 	glTranslatef(dir[0], dir[1], dir[2]);
 	glutSolidSphere(1, 20, 20);
 	glPopMatrix();
 }
-
-Texture texture_test;
-Texture texture_facade;
-Texture texture_mur;
-Texture texture_sol;
-Texture texture_toit;
-
-
 
 GLvoid initGL()
 {
@@ -177,6 +244,7 @@ GLvoid initGL()
 	texture_sol.charger("textures/sol.png");
 	texture_test.charger("textures/test.png");
 	texture_toit.charger("textures/toit.png");
+	texture_toit.charger("textures/fumee.tga");
 
 
 
@@ -308,7 +376,6 @@ void affiche_maison( float xp, float yp, float zp, float yr )
  
 
 	// Mur de face
-
 	glEnable(GL_TEXTURE_2D);
  	texture_mur.define();
 
@@ -326,7 +393,6 @@ void affiche_maison( float xp, float yp, float zp, float yr )
 
 
 	// Mur arrière
-
 	glNormal3f(0,0,-1);
 	glBegin(GL_QUADS);
 		glTexCoord2f(0.0f,0.0f);
@@ -340,7 +406,6 @@ void affiche_maison( float xp, float yp, float zp, float yr )
 	glEnd();
 
 	// Mur droit
-
 	glNormal3f(1,0,0);
 	glBegin(GL_QUADS);
 		glTexCoord2f(0.0f,0.0f);
@@ -376,7 +441,6 @@ void affiche_maison( float xp, float yp, float zp, float yr )
 
 
 	// Triangle avant
-
 	glEnable(GL_TEXTURE_2D);
 	texture_mur.define();
 
@@ -393,7 +457,6 @@ void affiche_maison( float xp, float yp, float zp, float yr )
 	glDisable(GL_TEXTURE_2D);
 
 	// Triangle arrière
-
 	glEnable(GL_TEXTURE_2D);
 	texture_mur.define();
 
@@ -446,12 +509,13 @@ void affiche_maison( float xp, float yp, float zp, float yr )
 
 	glDisable(GL_TEXTURE_2D);
 
-
-	glPopMatrix();										// Restaure la matrice de vue
+	// Restaure la matrice de vue
+	glPopMatrix();
 }
 
 void affiche_arbre(int x, int y, int z)
 {
+	glPushMatrix();
 	glTranslatef(x, y, z);
 	glRotatef(90, -1, 0, 0);
 	
@@ -470,6 +534,7 @@ void affiche_arbre(int x, int y, int z)
 	//cone 2
 	setColor(15, 105, 0);
 	glutSolidCone(1.5, 6, 10, 50);
+	glPopMatrix();
 }
 
 
@@ -494,6 +559,8 @@ void affiche_arbre(int x, int y, int z)
 ///////////////////////////////////////////////////////////////////////////////
 void affiche_scene()
 {
+	affiche_lumiere();
+
 	affiche_sol();								
 
 	affiche_maison( -4, 0, -9, 110 );
@@ -502,11 +569,32 @@ void affiche_scene()
 
 	affiche_arbre(0, 0, 0);
 
-	affiche_lumiere();
-
 	glutSwapBuffers();							// Affiche la scène à l'écran (affichage en double buffer)
 }
 
+float mesure_temps_ecoule()
+{
+	static long temps_precedent = -1;
+	long temps_actuel;
+	float dt = 0;
+
+	//Mesure temps actuel
+	temps_actuel = glutGet(GLUT_ELAPSED_TIME);
+
+	if(temps_precedent == -1) // verif si c'est le premier appel à la fonction
+	{
+		temps_precedent = glutGet(GLUT_ELAPSED_TIME);
+		dt = 0;
+	}
+	else // sinon fais la difference avec la valeur précedement stocké
+	{
+		dt = (float)(temps_actuel - temps_precedent) / 1000.0f;
+		temps_precedent = temps_actuel;
+	}
+
+	return dt;
+
+}
 
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -540,7 +628,7 @@ GLvoid callback_display()
 	//* rotation qu'on vient d'appliquer à la scène.
 	//*****************************************************************
 
-
+	float dt = mesure_temps_ecoule();
 
 	// On affiche la scène.
 	affiche_scene();
