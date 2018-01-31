@@ -1,4 +1,16 @@
 ///////////////////////////////////////////////////////////////////////////////
+// IUT d'Aix-Marseille Université, site d'Arles
+// Département Informatique
+// 2ème année
+// ----------------------------------------------------------------------------
+// IN - Synthèse d'images - Rendu réaliste
+// Auteur : Sébastien Thon
+// ----------------------------------------------------------------------------
+// Base du TP 1
+// Base d'un programme permettant d'afficher une scène composée d'un sol, de
+// maisons et d'arbres. On placera des sources de lumière, on spécifiera les
+// matériaux des différents objets et on utilisera un effet de brouillard.
+// ----------------------------------------------------------------------------
 // Compilation sous Windows :
 //   g++ -Wall maison.cpp -o maison.exe -lfreeglut -lglu32 -lopengl32
 // Compilation sous Linux :
@@ -10,10 +22,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
-
 #include <GL/glut.h>
-#include "stb_image.h"
 #include <iostream>
+#include <list>
+#include "stb_image.h"
+#include "vector3f.h"
 
 using namespace std;
 
@@ -156,9 +169,10 @@ class Puff
 		GLfloat size;
 		GLfloat xpos, ypos, zpos;	
 		GLfloat speed_x, speed_y, speed_z;
-		GLfloat life_time;
 
 	public:
+		GLfloat life_time;
+
 		inline Puff(GLfloat s, GLfloat x, GLfloat y, GLfloat z, GLfloat sx, GLfloat sy, GLfloat sz, GLfloat lt)
 				: size(s), xpos(x), ypos(y), zpos(z), speed_x(sx), speed_y(sy), speed_z(sz), life_time(lt) {}
 
@@ -166,7 +180,7 @@ class Puff
 				: size(s), xpos(x), ypos(y), zpos(z), speed_x(1), speed_y(1), speed_z(1), life_time(lt) {}
 
 		void play(GLfloat time);
-		void display(float xp, float yp, float zp, float yr);
+		void display();
 };
 
 void Puff::play(GLfloat time)
@@ -209,11 +223,13 @@ void Puff::display()
 
 ///////////////////////////////// END_PUFF //////////////////////////////////
 
+////////////////////////////////// STEAM ////////////////////////////////////
+
 class Steam
 {
 	private:
 		GLfloat xpos, ypos, zpos;
-		List<Puff> list_puffs;
+		list<Puff> puffs_list;
 		GLfloat emission_interval;
 		GLfloat time_spend;
 		Texture* texture;	
@@ -223,16 +239,46 @@ class Steam
 			: xpos(x), ypos(y), zpos(z), emission_interval(ei), time_spend(ts), texture(texture) {}
 
 		void play(GLfloat time);
+		void display();
 };
 
 void Steam::play(GLfloat time)
 {
 	time_spend += time;
 	if (time_spend > emission_interval)
-		time_spend =0;
-		// ajouter nouvel elem. 
-	else
+	{
+		time_spend = 0;
+		puffs_list.push_back(Puff(1,0,0,0,5));
+	}
+
+	list<Puff>::iterator i;
+	i = puffs_list.begin();
+	while(i != puffs_list.end())
+	{
+		if ( i->life_time <= 0)
+			i = puffs_list.erase(i);
+		else
+			i++;
+	}
+
+	for(auto& i : puffs_list)
+	{
+		i.play(time);
+	}
 }
+
+void Steam::display()
+{
+	list<Puff>::iterator i;
+	i = puffs_list.begin();
+
+	for(i = puffs_list.begin(); i != puffs_list.end(); i++)
+	{
+		i->display();
+	}	
+}
+
+///////////////////////////////// END_STEAM /////////////////////////////////
 
 ////////////////////////////////// TOOLBOX //////////////////////////////////
 
@@ -271,7 +317,7 @@ GLvoid initGL()
 	texture_sol.charger("textures/sol.png");
 	texture_test.charger("textures/test.png");
 	texture_toit.charger("textures/toit.png");
-	texture_toit.charger("textures/fumee.tga");
+	texture_fumee.charger("textures/fumee.tga");
 
 
 
