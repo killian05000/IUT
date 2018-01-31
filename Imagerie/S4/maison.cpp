@@ -276,6 +276,13 @@ void Steam::display()
 	{
 		i->display();
 	}	
+
+	// Autre méthode avec un for auto& :
+		
+	// for(auto& i : puffs_list)
+	// {
+	// 	i.display();
+	// }
 }
 
 ///////////////////////////////// END_STEAM /////////////////////////////////
