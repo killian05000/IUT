@@ -147,6 +147,7 @@ Texture texture_fumee;
 
 //////////////////////////////// END_TEXTURE ////////////////////////////////
 
+
 /////////////////////////////////// PUFF ////////////////////////////////////
 
 class Puff
@@ -176,16 +177,16 @@ void Puff::play(GLfloat time)
 	life_time -= time;
 }
 
-void Puff::display(float xp, float yp, float zp, float yr)
+void Puff::display()
 {
 	glPushMatrix();										// Sauve la matrice de vue actuelle
-	glTranslatef(xp, yp, zp);							// Positionne la fumee avec une translation
-	glRotatef(yr, 0,1,0);								// et une rotation
-
-	glNormal3f(0,1,0);
+	glDisable(GL_LIGHTING);
 
 	glEnable(GL_TEXTURE_2D);
  	texture_fumee.define();
+
+ 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+ 	glEnable(GL_BLEND);
 
 	glNormal3f(0,0,1);
 	glBegin(GL_QUADS);
@@ -201,11 +202,37 @@ void Puff::display(float xp, float yp, float zp, float yr)
 
 	glDisable(GL_TEXTURE_2D);
 
+	glDisable(GL_BLEND);
+	glEnable(GL_LIGHTING);
 	glPushMatrix();
-
 }
 
 ///////////////////////////////// END_PUFF //////////////////////////////////
+
+class Steam
+{
+	private:
+		GLfloat xpos, ypos, zpos;
+		List<Puff> list_puffs;
+		GLfloat emission_interval;
+		GLfloat time_spend;
+		Texture* texture;	
+
+	public:
+		inline Steam(GLfloat x, GLfloat y, GLfloat z, GLfloat ei, GLfloat ts, Texture *texture) // passez &texture_fumee
+			: xpos(x), ypos(y), zpos(z), emission_interval(ei), time_spend(ts), texture(texture) {}
+
+		void play(GLfloat time);
+};
+
+void Steam::play(GLfloat time)
+{
+	time_spend += time;
+	if (time_spend > emission_interval)
+		time_spend =0;
+		// ajouter nouvel elem. 
+	else
+}
 
 ////////////////////////////////// TOOLBOX //////////////////////////////////
 
