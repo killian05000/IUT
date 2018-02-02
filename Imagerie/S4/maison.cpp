@@ -286,7 +286,7 @@ void Steam::play(GLfloat time)
 	if (time_spend > emission_interval)
 	{
 		time_spend = 0;
-		puffs_list.push_back(Puff(3,xpos,ypos,zpos, 0, 1, 1, 10, 10));		
+		puffs_list.push_back(Puff(1,xpos,ypos,zpos, 0, 1, 1, 10, 10));		
 	}
 
 	list<Puff>::iterator i;
@@ -523,39 +523,63 @@ void affiche_maison( float xp, float yp, float zp, float yr )
 
 	//cheminée
 	glPushMatrix();
-	glTranslatef(0,10, -2);
+	glTranslatef(0,9, -3);
 	glNormal3f(10,0,5);
 	glBegin(GL_QUADS);
 	 
-	glVertex3d(1,1,1);
-	glVertex3d(-1,1,1);
-	glVertex3d(-1,1,-1);
-	glVertex3d(1,1,-1);
+ 	glTexCoord2f(0.0f,0.0f);
+	glVertex3d(0.7,0.7,0.7);
+	glTexCoord2f(0.0f,1.0f);
+	glVertex3d(-0.7,0.7,0.7);
+	glTexCoord2f(1.0f,1.0f);
+	glVertex3d(-0.7,0.7,-0.7);
+	glTexCoord2f(1.0f,0.0f);
+	glVertex3d(0.7,0.7,-0.7);
 	 
-	glVertex3d(1,-1,1);
-	glVertex3d(1,1,1);
-	glVertex3d(1,1,-1);
-	glVertex3d(1,-1,-1);
+	glTexCoord2f(0.0f,0.0f); 
+	glVertex3d(0.7,-0.7,0.7);
+	glTexCoord2f(0.0f,1.0f);
+	glVertex3d(0.7,0.7,0.7);
+	glTexCoord2f(1.0f,1.0f);
+	glVertex3d(0.7,0.7,-0.7);
+	glTexCoord2f(1.0f,0.0f);
+	glVertex3d(0.7,-0.7,-0.7);
 	 
-	glVertex3d(1,-1,1);
-	glVertex3d(-1,-1,1);
-	glVertex3d(-1,-1,-1);
-	glVertex3d(1,-1,-1);
+	glTexCoord2f(0.0f,0.0f);
+	glVertex3d(0.7,-0.7,0.7);
+	glTexCoord2f(0.0f,1.0f);
+	glVertex3d(-0.7,-0.7,0.7);
+	glTexCoord2f(1.0f,1.0f);
+	glVertex3d(-0.7,-0.7,-0.7);
+	glTexCoord2f(1.0f,0.0f);
+	glVertex3d(0.7,-0.7,-0.7);
 	 
-	glVertex3d(-1,-1,1);
-	glVertex3d(-1,1,1);
-	glVertex3d(-1,1,-1);
-	glVertex3d(-1,-1,-1);
+	glTexCoord2f(0.0f,0.0f);
+	glVertex3d(-0.7,-0.7,0.7);
+	glTexCoord2f(0.0f,1.0f);
+	glVertex3d(-0.7,0.7,0.7);
+	glTexCoord2f(1.0f,1.0f);
+	glVertex3d(-0.7,0.7,-0.7);
+	glTexCoord2f(1.0f,0.0f);
+	glVertex3d(-0.7,-0.7,-0.7);
 	 
-	glVertex3d(1,-1,1);
-	glVertex3d(1,1,1);
-	glVertex3d(-1,1,1);
-	glVertex3d(-1,-1,1);
+	glTexCoord2f(0.0f,0.0f);
+	glVertex3d(0.7,-0.7,0.7);
+	glTexCoord2f(0.0f,1.0f);
+	glVertex3d(0.7,0.7,0.7);
+	glTexCoord2f(1.0f,1.0f);
+	glVertex3d(-0.7,0.7,0.7);
+	glTexCoord2f(1.0f,0.0f);
+	glVertex3d(-0.7,-0.7,0.7);
 	 
-	glVertex3d(1,-1,-1);
-	glVertex3d(1,1,-1);
-	glVertex3d(-1,1,-1);
-	glVertex3d(-1,-1,-1);
+	glTexCoord2f(0.0f,0.0f);
+	glVertex3d(0.7,-0.7,-0.7);
+	glTexCoord2f(0.0f,1.0f);
+	glVertex3d(0.7,0.7,-0.7);
+	glTexCoord2f(1.0f,1.0f);
+	glVertex3d(-0.7,0.7,-0.7);
+	glTexCoord2f(1.0f,0.0f);
+	glVertex3d(-0.7,-0.7,-0.7);
 	 
 	glEnd();
 	glPopMatrix();
@@ -726,7 +750,7 @@ void affiche_arbre(int x, int y, int z)
 //    _
 ///////////////////////////////////////////////////////////////////////////////
 
-Steam fumee  = Steam(10, 9, -2, 0.5, &texture_fumee);
+Steam fumee  = Steam(10, 9, -3.5, 0.5, &texture_fumee);
 
 void affiche_scene(float dt)
 {
