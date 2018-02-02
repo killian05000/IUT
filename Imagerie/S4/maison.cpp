@@ -25,6 +25,7 @@
 #include <GL/glut.h>
 #include <iostream>
 #include <list>
+#include <random>
 #include "stb_image.h"
 #include "vector3f.h"
 
@@ -286,7 +287,11 @@ void Steam::play(GLfloat time)
 	if (time_spend > emission_interval)
 	{
 		time_spend = 0;
-		puffs_list.push_back(Puff(1,xpos,ypos,zpos, 0, 1, 1, 10, 10));		
+		random_device generator;
+	    uniform_int_distribution<int> distribution(80, 100);
+    	int res = distribution(generator);
+    	GLfloat size = res/100;
+		puffs_list.push_back(Puff(size, xpos, ypos, zpos, 0, 1, 1, 10, 10));		
 	}
 
 	list<Puff>::iterator i;
