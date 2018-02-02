@@ -527,58 +527,58 @@ void affiche_maison( float xp, float yp, float zp, float yr )
 	glNormal3f(10,0,5);
 	glBegin(GL_QUADS);
 	 
- 	glTexCoord2f(0.0f,0.0f);
+	glTexCoord2f(0.0f,0.0f);
 	glVertex3d(0.7,0.7,0.7);
-	glTexCoord2f(0.0f,1.0f);
+	glTexCoord2f(0.0f,0.3f);
 	glVertex3d(-0.7,0.7,0.7);
-	glTexCoord2f(1.0f,1.0f);
+	glTexCoord2f(0.3f,0.3f);
 	glVertex3d(-0.7,0.7,-0.7);
-	glTexCoord2f(1.0f,0.0f);
+	glTexCoord2f(0.3f,0.0f);
 	glVertex3d(0.7,0.7,-0.7);
 	 
 	glTexCoord2f(0.0f,0.0f); 
 	glVertex3d(0.7,-0.7,0.7);
-	glTexCoord2f(0.0f,1.0f);
+	glTexCoord2f(0.0f,0.3f);
 	glVertex3d(0.7,0.7,0.7);
-	glTexCoord2f(1.0f,1.0f);
+	glTexCoord2f(0.3f,0.3f);
 	glVertex3d(0.7,0.7,-0.7);
-	glTexCoord2f(1.0f,0.0f);
+	glTexCoord2f(0.3f,0.0f);
 	glVertex3d(0.7,-0.7,-0.7);
 	 
 	glTexCoord2f(0.0f,0.0f);
 	glVertex3d(0.7,-0.7,0.7);
-	glTexCoord2f(0.0f,1.0f);
+	glTexCoord2f(0.0f,0.3f);
 	glVertex3d(-0.7,-0.7,0.7);
-	glTexCoord2f(1.0f,1.0f);
+	glTexCoord2f(0.3f,0.3f);
 	glVertex3d(-0.7,-0.7,-0.7);
-	glTexCoord2f(1.0f,0.0f);
+	glTexCoord2f(0.3f,0.0f);
 	glVertex3d(0.7,-0.7,-0.7);
 	 
 	glTexCoord2f(0.0f,0.0f);
 	glVertex3d(-0.7,-0.7,0.7);
-	glTexCoord2f(0.0f,1.0f);
+	glTexCoord2f(0.0f,0.3f);
 	glVertex3d(-0.7,0.7,0.7);
-	glTexCoord2f(1.0f,1.0f);
+	glTexCoord2f(0.3f,0.3f);
 	glVertex3d(-0.7,0.7,-0.7);
-	glTexCoord2f(1.0f,0.0f);
+	glTexCoord2f(0.3f,0.0f);
 	glVertex3d(-0.7,-0.7,-0.7);
 	 
 	glTexCoord2f(0.0f,0.0f);
 	glVertex3d(0.7,-0.7,0.7);
-	glTexCoord2f(0.0f,1.0f);
+	glTexCoord2f(0.0f,0.3f);
 	glVertex3d(0.7,0.7,0.7);
-	glTexCoord2f(1.0f,1.0f);
+	glTexCoord2f(0.3f,0.3f);
 	glVertex3d(-0.7,0.7,0.7);
-	glTexCoord2f(1.0f,0.0f);
+	glTexCoord2f(0.3f,0.0f);
 	glVertex3d(-0.7,-0.7,0.7);
 	 
 	glTexCoord2f(0.0f,0.0f);
 	glVertex3d(0.7,-0.7,-0.7);
-	glTexCoord2f(0.0f,1.0f);
+	glTexCoord2f(0.0f,0.3f);
 	glVertex3d(0.7,0.7,-0.7);
-	glTexCoord2f(1.0f,1.0f);
+	glTexCoord2f(0.3f,0.3f);
 	glVertex3d(-0.7,0.7,-0.7);
-	glTexCoord2f(1.0f,0.0f);
+	glTexCoord2f(0.3f,0.0f);
 	glVertex3d(-0.7,-0.7,-0.7);
 	 
 	glEnd();
