@@ -171,13 +171,13 @@ class Puff
 		GLfloat speed_x, speed_y, speed_z;
 
 	public:
-		GLfloat life_time;
+		GLfloat life_time, life_time_max;
 
-		inline Puff(GLfloat s, GLfloat x, GLfloat y, GLfloat z, GLfloat sx, GLfloat sy, GLfloat sz, GLfloat lt)
-				: size(s), xpos(x), ypos(y), zpos(z), speed_x(sx), speed_y(sy), speed_z(sz), life_time(lt) {}
+		inline Puff(GLfloat s, GLfloat x, GLfloat y, GLfloat z, GLfloat sx, GLfloat sy, GLfloat sz, GLfloat lt, GLfloat ltm)
+				: size(s), xpos(x), ypos(y), zpos(z), speed_x(sx), speed_y(sy), speed_z(sz), life_time(lt), life_time_max(ltm) {}
 
-		inline Puff(GLfloat s, GLfloat x, GLfloat y, GLfloat z, GLfloat lt)
-				: size(s), xpos(x), ypos(y), zpos(z), speed_x(1), speed_y(1), speed_z(1), life_time(lt) {}
+		// inline Puff(GLfloat s, GLfloat x, GLfloat y, GLfloat z, GLfloat lt)
+		// 		: size(s), xpos(x), ypos(y), zpos(z), speed_x(1), speed_y(1), speed_z(1), life_time(lt) {}
 
 		void play(GLfloat time);
 		void display();
@@ -185,40 +185,78 @@ class Puff
 
 void Puff::play(GLfloat time)
 {
-	xpos = xpos*speed_x;
-	ypos = ypos*speed_y;
-	zpos = zpos*speed_z;
+	xpos += time*speed_x;
+	ypos += time*speed_y;
+	zpos += time*speed_z;
 	life_time -= time;
+	size+=time*0.5;
 }
 
 void Puff::display()
 {
-	glPushMatrix();										// Sauve la matrice de vue actuelle
 	glDisable(GL_LIGHTING);
 
 	glEnable(GL_TEXTURE_2D);
- 	texture_fumee.define();
 
  	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
  	glEnable(GL_BLEND);
 
-	glNormal3f(0,0,1);
+ 	glColor4f(0.337, 0.337, 0.337, life_time/life_time_max);
+
+	// glNormal3f(0,0,1);
+	// glBegin(GL_QUADS);
+	// 	glTexCoord2f(0.0f,0.0f);
+	// 	glVertex3d(-4, 5, 5);
+	// 	glTexCoord2f(0.0f,1.0f);
+	// 	glVertex3d(-4, 0, 5);
+	// 	glTexCoord2f(1.0f,1.0f);
+	// 	glVertex3d( 4, 0, 5);
+	// 	glTexCoord2f(1.0f,0.0f);
+	// 	glVertex3d( 4, 5, 5);
+	// glEnd();
+
+	// On récupère le positionnement de la camera
+	float matrice [16];
+	glGetFloatv( GL_MODELVIEW_MATRIX, matrice );
+	Vector3f Haut, Droite;
+	Droite.x = matrice[0] * (size / 2.0f);
+	Droite.y = matrice[4] * (size / 2.0f);
+	Droite.z = matrice[8] * (size / 2.0f);
+	Haut.x = matrice[1] * (size / 2.0f);
+	Haut.y = matrice[5] * (size / 2.0f);
+	Haut.z = matrice[9] * (size / 2.0f);
+	Vector3f A, B, C, D;
+
+	// On calcule la position des 4 sommets du quadrilatère
+	A.x = xpos + Haut.x - Droite.x;
+	A.y = ypos + Haut.y - Droite.y;
+	A.z = zpos + Haut.z - Droite.z;
+	B.x = xpos + Haut.x + Droite.x;
+	B.y = ypos + Haut.y + Droite.y;
+	B.z = zpos + Haut.z + Droite.z;
+	C.x = xpos - Haut.x + Droite.x;
+	C.y = ypos - Haut.y + Droite.y;
+	C.z = zpos - Haut.z + Droite.z;
+	D.x = xpos - Haut.x - Droite.x;
+	D.y = ypos - Haut.y - Droite.y;
+	D.z = zpos - Haut.z - Droite.z;
+
+	// Affichage du billboard
 	glBegin(GL_QUADS);
-		glTexCoord2f(0.0f,0.0f);
-		glVertex3d(-4, 5, 5);
-		glTexCoord2f(0.0f,1.0f);
-		glVertex3d(-4, 0, 5);
-		glTexCoord2f(1.0f,1.0f);
-		glVertex3d( 4, 0, 5);
-		glTexCoord2f(1.0f,0.0f);
-		glVertex3d( 4, 5, 5);
+	glTexCoord2f(0.0f, 0.0f);
+	glVertex3f(D.x,D.y,D.z);
+	glTexCoord2f(0.0f, 1.0f);
+	glVertex3f(C.x,C.y,C.z);
+	glTexCoord2f(1.0f, 1.0f);
+	glVertex3f(B.x,B.y,B.z);
+	glTexCoord2f(1.0f, 0.0f);
+	glVertex3f(A.x,A.y,A.z);
 	glEnd();
 
 	glDisable(GL_TEXTURE_2D);
 
 	glDisable(GL_BLEND);
 	glEnable(GL_LIGHTING);
-	glPushMatrix();
 }
 
 ///////////////////////////////// END_PUFF //////////////////////////////////
@@ -235,8 +273,8 @@ class Steam
 		Texture* texture;	
 
 	public:
-		inline Steam(GLfloat x, GLfloat y, GLfloat z, GLfloat ei, GLfloat ts, Texture *texture) // passez &texture_fumee
-			: xpos(x), ypos(y), zpos(z), emission_interval(ei), time_spend(ts), texture(texture) {}
+		inline Steam(GLfloat x, GLfloat y, GLfloat z, GLfloat ei, Texture *texture) // passez &texture_fumee
+			: xpos(x), ypos(y), zpos(z), emission_interval(ei), texture(texture) {}
 
 		void play(GLfloat time);
 		void display();
@@ -248,7 +286,7 @@ void Steam::play(GLfloat time)
 	if (time_spend > emission_interval)
 	{
 		time_spend = 0;
-		puffs_list.push_back(Puff(1,0,0,0,5));
+		puffs_list.push_back(Puff(3,xpos,ypos,zpos, 0, 1, 1, 10, 10));		
 	}
 
 	list<Puff>::iterator i;
@@ -271,11 +309,23 @@ void Steam::display()
 {
 	list<Puff>::iterator i;
 	i = puffs_list.begin();
+ 
+	glDepthMask(GL_FALSE);
+	texture->define();
 
-	for(i = puffs_list.begin(); i != puffs_list.end(); i++)
+	// for(i = puffs_list.begin(); i != puffs_list.end(); i++)
+	// {
+	// 	i->display();
+	// }	
+		
+	for(auto& i : puffs_list)
 	{
-		i->display();
-	}	
+		i.display();
+	}
+	
+
+
+	glDepthMask(GL_TRUE);
 
 	// Autre méthode avec un for auto& :
 		
@@ -471,6 +521,44 @@ void affiche_maison( float xp, float yp, float zp, float yr )
 		glVertex3d( 4, 5, 5);
 	glEnd();
 
+	//cheminée
+	glPushMatrix();
+	glTranslatef(0,10, -2);
+	glNormal3f(10,0,5);
+	glBegin(GL_QUADS);
+	 
+	glVertex3d(1,1,1);
+	glVertex3d(-1,1,1);
+	glVertex3d(-1,1,-1);
+	glVertex3d(1,1,-1);
+	 
+	glVertex3d(1,-1,1);
+	glVertex3d(1,1,1);
+	glVertex3d(1,1,-1);
+	glVertex3d(1,-1,-1);
+	 
+	glVertex3d(1,-1,1);
+	glVertex3d(-1,-1,1);
+	glVertex3d(-1,-1,-1);
+	glVertex3d(1,-1,-1);
+	 
+	glVertex3d(-1,-1,1);
+	glVertex3d(-1,1,1);
+	glVertex3d(-1,1,-1);
+	glVertex3d(-1,-1,-1);
+	 
+	glVertex3d(1,-1,1);
+	glVertex3d(1,1,1);
+	glVertex3d(-1,1,1);
+	glVertex3d(-1,-1,1);
+	 
+	glVertex3d(1,-1,-1);
+	glVertex3d(1,1,-1);
+	glVertex3d(-1,1,-1);
+	glVertex3d(-1,-1,-1);
+	 
+	glEnd();
+	glPopMatrix();
 
 	// Mur arrière
 	glNormal3f(0,0,-1);
@@ -637,7 +725,10 @@ void affiche_arbre(int x, int y, int z)
 // Retour :
 //    _
 ///////////////////////////////////////////////////////////////////////////////
-void affiche_scene()
+
+Steam fumee  = Steam(10, 9, -2, 0.5, &texture_fumee);
+
+void affiche_scene(float dt)
 {
 	affiche_lumiere();
 
@@ -648,6 +739,9 @@ void affiche_scene()
 	affiche_maison( -5, 0, 8, -120 );
 
 	affiche_arbre(0, 0, 0);
+
+	fumee.play(dt);
+	fumee.display();
 
 	glutSwapBuffers();							// Affiche la scène à l'écran (affichage en double buffer)
 }
@@ -701,6 +795,9 @@ GLvoid callback_display()
 
 	glLightfv(GL_LIGHT0, GL_POSITION, dir);
 
+	// fumee.play(2);
+	// fumee.display();
+
 	//*****************************************************************
 	//* A FAIRE :
 	//* Re-spécifier la position des sources de lumière avec glLightfv()
@@ -711,7 +808,7 @@ GLvoid callback_display()
 	float dt = mesure_temps_ecoule();
 
 	// On affiche la scène.
-	affiche_scene();
+	affiche_scene(dt);
 
 	// On force OpenGL à afficher avant de passer à la suite.
 	glFlush();
@@ -765,22 +862,22 @@ GLvoid callback_keyboard(unsigned char key, int x, int y)
 			glutPostRedisplay();
 			break;
 
-		case 'z':
+		case 'e':
 		dir[1]++;
 		glutPostRedisplay();
 		break;
 
-		case 's':
+		case 'a':
 		dir[1]--;
 		glutPostRedisplay();
 		break;
 
-		case 'a':
+		case 's':
 		dir[2]++;
 		glutPostRedisplay();
 		break;
 
-		case 'e':
+		case 'z':
 		dir[2]--;
 		glutPostRedisplay();
 		break;
@@ -881,6 +978,15 @@ GLvoid callback_motion(int x, int y)
 // Retour :
 //    Un entier contenant le code de retour du programme.
 ///////////////////////////////////////////////////////////////////////////////
+
+void timer(int v)
+{
+glutPostRedisplay();
+glutTimerFunc(20, timer, 0);
+// Le timer ne fonctionne qu'une fois,
+// il faut le relancer
+}
+
 int main(int argc, char *argv[])
 {
 	// Initialisation de paramètres de Glut
@@ -889,6 +995,8 @@ int main(int argc, char *argv[])
 	glutInitWindowSize(WIDTH, HEIGHT);
 	glutInitWindowPosition(0, 0);
 	glutCreateWindow("Maison");
+
+	glutTimerFunc(20, timer, 0);
 
 	// Intitialisation de paramètres d'OpenGL
 	initGL();
