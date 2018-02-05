@@ -5,17 +5,78 @@
 #include <osg//Material>
 #include <osg/PositionAttitudeTransform>
 #include <osgGA/NodeTrackerManipulator>
+#include <osg/LightSource>
+#include <osgGA/GUIEventHandler>
+#include <osgViewer/ViewerEventHandlers>
 
 using namespace osg;
 
-int main (void)
+osg::Group* scene = new osg::Group;
+osg::StateSet* state = scene->getOrCreateStateSet();
+
+class EventManager : public osgGA::GUIEventHandler
+{
+    public:
+        virtual bool handle(const osgGA::GUIEventAdapter& ea, osgGA::GUIActionAdapter& aa);
+};
+
+bool EventManager::handle(const osgGA::GUIEventAdapter& ea, osgGA::GUIActionAdapter& aa)
+{
+    switch(ea.getEventType())
+    {
+        case osgGA::GUIEventAdapter::KEYDOWN : // appui sur une touche
+           switch(ea.getKey())
+           {
+                case 'a':
+                    if(state->getMode(1) == osg::StateAttribute::ON)
+                        state->setMode( GL_LIGHT1, osg::StateAttribute::OFF);
+                    else
+                        state->setMode( GL_LIGHT1, osg::StateAttribute::ON);
+                    break;
+                case 'z':
+                    if(state->getMode(2) == osg::StateAttribute::ON)
+                        state->setMode( GL_LIGHT2, osg::StateAttribute::OFF);
+                    else
+                        state->setMode( GL_LIGHT2, osg::StateAttribute::ON);
+                    break;
+
+                default:
+                    break;
+            }
+    }
+    return false;
+}
+
+int main ()
 {
     osg::DisplaySettings::instance()->setNumMultiSamples( 4 );
 
     osgViewer::Viewer viewer;
     viewer.setUpViewInWindow(100, 50, 800, 600);
     //viewer.getCamera()->setClearColor(osg::Vec4(1,1,1,1));
-    osg::Group* scene = new osg::Group;
+    state->setMode( GL_LIGHT0, osg::StateAttribute::OFF );
+
+    //Lumière
+    osg::LightSource* light1 = new osg::LightSource;
+    light1->getLight()->setLightNum(1);    // GL_LIGHT1
+    light1->getLight()->setPosition(osg::Vec4(1,-1, 1,0));    // 0 = directionnel
+    light1->getLight()->setAmbient(osg::Vec4(0.2, 0.2, 0.2, 1.0));
+    light1->getLight()->setDiffuse(osg::Vec4(0.7, 0.4, 0.6, 1.0));
+    light1->getLight()->setSpecular(osg::Vec4(1.0, 1.0, 1.0, 1.0));
+    state->setMode( GL_LIGHT1, osg::StateAttribute::ON );
+
+    osg::LightSource* light2 = new osg::LightSource;
+    light2->getLight()->setLightNum(2);    // GL_LIGHT1
+    light2->getLight()->setPosition(osg::Vec4(1,-1, 1,1));    // 1 = ponctuelle
+    light2->getLight()->setAmbient(osg::Vec4(0.2, 0.2, 0.2, 1.0));
+    light2->getLight()->setDiffuse(osg::Vec4(0.7, 0.4, 0.6, 1.0));
+    light2->getLight()->setSpecular(osg::Vec4(1.0, 1.0, 1.0, 1.0));
+    state->setMode( GL_LIGHT2, osg::StateAttribute::ON );
+
+    osg::LightSource* lights = new osg::LightSource;
+    lights->addChild(light1);
+    lights->addChild(light2);
+
 
     //Cube
     osg::Box* box = new osg::Box(osg::Vec3(0,0,0),2,3,4);
@@ -71,11 +132,16 @@ int main (void)
     coneTransform->setAttitude(osg::Quat(osg::DegreesToRadians(20.0), osg::Vec3(0.0, 0.0, 1.0)));
     coneTransform->addChild(coneGeode);
 
+
     osgGA::NodeTrackerManipulator* manip = new osgGA::NodeTrackerManipulator;
     manip->setTrackNode(coneGeode);
     manip->setTrackerMode(osgGA::NodeTrackerManipulator::NODE_CENTER);
     viewer.setCameraManipulator(manip);
 
+    EventManager* gestionnaire = new EventManager();
+    viewer.addEventHandler(gestionnaire);
+
+    scene->addChild(lights);
     scene->addChild(boxTransform);
         //boxTransform->addChild(boxGeode);
     scene->addChild(sphereTransform);
