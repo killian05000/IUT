@@ -8,6 +8,7 @@
 #include <osg/LightSource>
 #include <osgGA/GUIEventHandler>
 #include <osgViewer/ViewerEventHandlers>
+#include <iostream>
 
 using namespace osg;
 
@@ -24,7 +25,8 @@ bool EventManager::handle(const osgGA::GUIEventAdapter& ea, osgGA::GUIActionAdap
 {
     switch(ea.getEventType())
     {
-        case osgGA::GUIEventAdapter::KEYDOWN : // appui sur une touche
+        
+        case osgGA::GUIEventAdapter::KEYDOWN: // appui sur une touche
            switch(ea.getKey())
            {
                 case 'a':
@@ -43,6 +45,10 @@ bool EventManager::handle(const osgGA::GUIEventAdapter& ea, osgGA::GUIActionAdap
                 default:
                     break;
             }
+            break;
+
+        default:
+            break;
     }
     return false;
 }
