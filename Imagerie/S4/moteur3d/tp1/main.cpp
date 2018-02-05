@@ -1,19 +1,21 @@
-// g++ -o main.exe main.cpp -losg -losgDB -losgViewer
+// g++ -o main.exe main.cpp -losg -losgDB -losgViewer -losgGA
 
 #include <osgViewer/Viewer>
 #include <osg/ShapeDrawable>
 #include <osg//Material>
 #include <osg/PositionAttitudeTransform>
+#include <osgGA/NodeTrackerManipulator>
 
 using namespace osg;
 
 int main (void)
 {
+    osg::DisplaySettings::instance()->setNumMultiSamples( 4 );
+
     osgViewer::Viewer viewer;
+    viewer.setUpViewInWindow(100, 50, 800, 600);
     //viewer.getCamera()->setClearColor(osg::Vec4(1,1,1,1));
-
     osg::Group* scene = new osg::Group;
-
 
     //Cube
     osg::Box* box = new osg::Box(osg::Vec3(0,0,0),2,3,4);
@@ -69,7 +71,10 @@ int main (void)
     coneTransform->setAttitude(osg::Quat(osg::DegreesToRadians(20.0), osg::Vec3(0.0, 0.0, 1.0)));
     coneTransform->addChild(coneGeode);
 
-
+    osgGA::NodeTrackerManipulator* manip = new osgGA::NodeTrackerManipulator;
+    manip->setTrackNode(coneGeode);
+    manip->setTrackerMode(osgGA::NodeTrackerManipulator::NODE_CENTER);
+    viewer.setCameraManipulator(manip);
 
     scene->addChild(boxTransform);
         //boxTransform->addChild(boxGeode);
