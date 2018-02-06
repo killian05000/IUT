@@ -203,7 +203,7 @@ void Puff::display()
  	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
  	glEnable(GL_BLEND);
 
- 	glColor4f(0.337, 0.337, 0.337, life_time/life_time_max);
+ 	glColor4f(0.300, 0.300, 0.300, life_time/life_time_max);
 
 	// glNormal3f(0,0,1);
 	// glBegin(GL_QUADS);
