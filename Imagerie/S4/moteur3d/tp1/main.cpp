@@ -30,7 +30,7 @@ bool EventManager::handle(const osgGA::GUIEventAdapter& ea, osgGA::GUIActionAdap
            switch(ea.getKey())
            {
                 case 'a':
-                    if(state->getMode(1) == osg::StateAttribute::ON)
+                    if(state->getMode(1) == osg::StateSetteAttribute::ON)
                         state->setMode( GL_LIGHT1, osg::StateAttribute::OFF);
                     else
                         state->setMode( GL_LIGHT1, osg::StateAttribute::ON);

@@ -14,7 +14,7 @@
 // Compilation sous Windows :
 //   g++ -Wall maison.cpp -o maison.exe -lfreeglut -lglu32 -lopengl32
 // Compilation sous Linux :
-//   g++ -Wall maison.cpp -o maison.exe -lglut -lGLU -lGL
+//   g++ maison.cpp -o maison.exe -lglut -lGLU -lGL
 ///////////////////////////////////////////////////////////////////////////////
 
 #define STB_IMAGE_IMPLEMENTATION
@@ -190,6 +190,7 @@ void Puff::play(GLfloat time)
 	ypos += time*speed_y;
 	zpos += time*speed_z;
 	life_time -= time;
+
 	size+=time*0.5;
 }
 
@@ -288,10 +289,15 @@ void Steam::play(GLfloat time)
 	{
 		time_spend = 0;
 		random_device generator;
-	    uniform_int_distribution<int> distribution(80, 100);
+	    uniform_int_distribution<int> distribution(40, 80);
     	int res = distribution(generator);
-    	GLfloat size = res/100;
-		puffs_list.push_back(Puff(size, xpos, ypos, zpos, 0, 1, 1, 10, 10));		
+    	GLfloat size = res/100.f;
+
+		uniform_int_distribution<int> distribution2(120, 180);
+    	int res2 = distribution2(generator);
+    	GLfloat dir = res2/100.f;
+
+		puffs_list.push_back(Puff(size, xpos, ypos, zpos, 0, dir, 1, 7, 7));		
 	}
 
 	list<Puff>::iterator i;
@@ -755,7 +761,7 @@ void affiche_arbre(int x, int y, int z)
 //    _
 ///////////////////////////////////////////////////////////////////////////////
 
-Steam fumee  = Steam(10, 9, -3.5, 0.5, &texture_fumee);
+Steam fumee  = Steam(10, 9, -3.5, 0.08, &texture_fumee);
 
 void affiche_scene(float dt)
 {
