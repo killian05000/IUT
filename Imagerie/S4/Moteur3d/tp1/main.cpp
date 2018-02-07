@@ -55,6 +55,8 @@ class EventManager : public osgGA::GUIEventHandler
 bool EventManager::handle(const osgGA::GUIEventAdapter& ea, osgGA::GUIActionAdapter& aa)
 {
     Vec3f dir = Vec3d{0,0,0};
+    static Node* n = nullptr;
+
     switch(ea.getEventType())
     {
         
@@ -75,56 +77,83 @@ bool EventManager::handle(const osgGA::GUIEventAdapter& ea, osgGA::GUIActionAdap
                         state->setMode( GL_LIGHT2, osg::StateAttribute::ON);
                     break;
 
-                case 's':
-                    name = "sphereT";
+                case 's': {
+                    SearchNode search("sphereT");
+                    scene->accept(search);
+                    n = search.getNode();
                     break;
+                }
 
-                case 'b':
-                    name = "boxT";
+                case 'b': {
+                    SearchNode search("boxT");
+                    scene->accept(search);
+                    n = search.getNode();
                     break;
+                }
 
-                case 'c':
-                    name = "coneT";
+                case 'c': {
+                    SearchNode search("coneT");
+                    scene->accept(search);
+                    n = search.getNode();
                     break;
+                }
 
                 case osgGA::GUIEventAdapter::KEY_Up:
-                    dir[1]+=1;
+                    dir[2]+=1;
+                    if (n != nullptr)
+                    {
+                        Vec3f pos = n->asTransform()->asPositionAttitudeTransform()->getPosition();
+                        n->asTransform()->asPositionAttitudeTransform()->setPosition(pos + dir);
+                    }
                     break;
 
                 case osgGA::GUIEventAdapter::KEY_Down:
-                    dir[1]-=1;
+                    dir[2]-=1;
+                    if (n != nullptr)
+                    {
+                        Vec3f pos = n->asTransform()->asPositionAttitudeTransform()->getPosition();
+                        n->asTransform()->asPositionAttitudeTransform()->setPosition(pos + dir);
+                    }
                     break;
 
                 case osgGA::GUIEventAdapter::KEY_Left:
                     dir[0]-=1;
+                    if (n != nullptr)
+                    {
+                        Vec3f pos = n->asTransform()->asPositionAttitudeTransform()->getPosition();
+                        n->asTransform()->asPositionAttitudeTransform()->setPosition(pos + dir);
+                    }
                     break;
 
                 case osgGA::GUIEventAdapter::KEY_Right:
                     dir[0]+=1;
+                    if (n != nullptr)
+                    {
+                        Vec3f pos = n->asTransform()->asPositionAttitudeTransform()->getPosition();
+                        n->asTransform()->asPositionAttitudeTransform()->setPosition(pos + dir);
+                    }
                     break;
 
                 case 'p':
-                    dir[2]+=1;
+                    dir[1]+=1;
+                    if (n != nullptr)
+                    {
+                        Vec3f pos = n->asTransform()->asPositionAttitudeTransform()->getPosition();
+                        n->asTransform()->asPositionAttitudeTransform()->setPosition(pos + dir);
+                    }
                     break;
 
                 case 'm':
-                    dir[2]-=1;
+                    dir[1]-=1;
+                    if (n != nullptr)
+                    {
+                        Vec3f pos = n->asTransform()->asPositionAttitudeTransform()->getPosition();
+                        n->asTransform()->asPositionAttitudeTransform()->setPosition(pos + dir);
+                    }
                     break;
-            }
-
-            SearchNode search(name);
-            scene->accept(search);
-            Node* n = search.getNode();
-
-            if (n != nullptr)
-            {
-                Vec3f pos = n->asTransform()->asPositionAttitudeTransform()->getPosition();
-                n->asTransform()->asPositionAttitudeTransform()->setPosition(pos + dir);
             }
             break;
     }
-
-
 
     return false;
 }
