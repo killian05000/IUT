@@ -11,18 +11,50 @@
 #include <iostream>
 
 using namespace osg;
+using namespace std;
 
 osg::Group* scene = new osg::Group;
 osg::StateSet* state = scene->getOrCreateStateSet();
+
+///////////////////// SEARCH_NODE /////////////////////
+
+class SearchNode : public NodeVisitor
+{
+    public:
+        SearchNode(const string& _name)
+            :NodeVisitor(NodeVisitor::TRAVERSE_ALL_CHILDREN), name(_name) {}
+
+        virtual void apply(Node& _node)
+        {
+            if(_node.getName() == name)
+                node = &_node;
+
+            traverse(_node);
+        }
+
+        Node * getNode() {return node;}
+
+    protected:
+        string name;
+        Node * node;
+};
+
+///////////////////// SEARCH_NODE /////////////////////
+
+//////////////////// EVENT_MANAGER //////////////////// 
 
 class EventManager : public osgGA::GUIEventHandler
 {
     public:
         virtual bool handle(const osgGA::GUIEventAdapter& ea, osgGA::GUIActionAdapter& aa);
+
+    private :
+    string name;
 };
 
 bool EventManager::handle(const osgGA::GUIEventAdapter& ea, osgGA::GUIActionAdapter& aa)
 {
+    Vec3f dir = Vec3d{0,0,0};
     switch(ea.getEventType())
     {
         
@@ -30,28 +62,76 @@ bool EventManager::handle(const osgGA::GUIEventAdapter& ea, osgGA::GUIActionAdap
            switch(ea.getKey())
            {
                 case 'a':
-                    if(state->getMode(1) == osg::StateSetteAttribute::ON)
+                    std::cout << "BBBBB" << std::endl;
+                    if(state->getMode(GL_LIGHT1) == osg::StateAttribute::ON)
                         state->setMode( GL_LIGHT1, osg::StateAttribute::OFF);
                     else
                         state->setMode( GL_LIGHT1, osg::StateAttribute::ON);
                     break;
                 case 'z':
-                    if(state->getMode(2) == osg::StateAttribute::ON)
+                    if(state->getMode(GL_LIGHT2) == osg::StateAttribute::ON)
                         state->setMode( GL_LIGHT2, osg::StateAttribute::OFF);
                     else
                         state->setMode( GL_LIGHT2, osg::StateAttribute::ON);
                     break;
 
-                default:
+                case 's':
+                    name = "sphereT";
+                    break;
+
+                case 'b':
+                    name = "boxT";
+                    break;
+
+                case 'c':
+                    name = "coneT";
+                    break;
+
+                case osgGA::GUIEventAdapter::KEY_Up:
+                    dir[1]+=1;
+                    break;
+
+                case osgGA::GUIEventAdapter::KEY_Down:
+                    dir[1]-=1;
+                    break;
+
+                case osgGA::GUIEventAdapter::KEY_Left:
+                    dir[0]-=1;
+                    break;
+
+                case osgGA::GUIEventAdapter::KEY_Right:
+                    dir[0]+=1;
+                    break;
+
+                case 'p':
+                    dir[2]+=1;
+                    break;
+
+                case 'm':
+                    dir[2]-=1;
                     break;
             }
-            break;
 
-        default:
+            SearchNode search(name);
+            scene->accept(search);
+            Node* n = search.getNode();
+
+            if (n != nullptr)
+            {
+                Vec3f pos = n->asTransform()->asPositionAttitudeTransform()->getPosition();
+                n->asTransform()->asPositionAttitudeTransform()->setPosition(pos + dir);
+            }
             break;
     }
+
+
+
     return false;
 }
+
+//////////////////// EVENT_MANAGER ////////////////////
+
+
 
 int main ()
 {
@@ -59,10 +139,11 @@ int main ()
 
     osgViewer::Viewer viewer;
     viewer.setUpViewInWindow(100, 50, 800, 600);
-    //viewer.getCamera()->setClearColor(osg::Vec4(1,1,1,1));
+    viewer.getCamera()->setClearColor(osg::Vec4(1,1,1,1));
     state->setMode( GL_LIGHT0, osg::StateAttribute::OFF );
 
-    //Lumière
+    //////////////////// LIGHTS ////////////////////
+
     osg::LightSource* light1 = new osg::LightSource;
     light1->getLight()->setLightNum(1);    // GL_LIGHT1
     light1->getLight()->setPosition(osg::Vec4(1,-1, 1,0));    // 0 = directionnel
@@ -83,8 +164,11 @@ int main ()
     lights->addChild(light1);
     lights->addChild(light2);
 
+    //////////////////// LIGHTS ////////////////////
 
-    //Cube
+
+    ///////////////////// CUBE /////////////////////
+
     osg::Box* box = new osg::Box(osg::Vec3(0,0,0),2,3,4);
     osg::ShapeDrawable* boxDrawable = new osg::ShapeDrawable(box);
     osg::Material* boxMaterial = new osg::Material;
@@ -97,12 +181,16 @@ int main ()
     boxGeode->addDrawable(boxDrawable);
 
     osg::PositionAttitudeTransform* boxTransform = new osg::PositionAttitudeTransform();
+    boxTransform->setName("boxT");
     boxTransform->setPosition(osg::Vec3(-2, 2, 0));
     boxTransform->setScale(osg::Vec3(1, 1, 1));
     boxTransform->setAttitude(osg::Quat(osg::DegreesToRadians(20.0), osg::Vec3(0.0, 0.0, 1.0)));
     boxTransform->addChild(boxGeode);
 
-    //Sphere
+    ///////////////////// CUBE /////////////////////
+
+    //////////////////// SPHERE ////////////////////
+
     osg::Sphere* sphere = new osg::Sphere(osg::Vec3(3,0,0),1.0);
     osg::ShapeDrawable* sphereDrawable = new osg::ShapeDrawable(sphere);
     osg::Material* sphereMaterial = new osg::Material;
@@ -115,12 +203,16 @@ int main ()
     sphereGeode->addDrawable(sphereDrawable);
 
     osg::PositionAttitudeTransform* sphereTransform = new osg::PositionAttitudeTransform();
+    sphereTransform->setName("sphereT");
     sphereTransform->setPosition(osg::Vec3(0, 0, 0));
     sphereTransform->setScale(osg::Vec3(1, 1, 1));
     sphereTransform->setAttitude(osg::Quat(osg::DegreesToRadians(20.0), osg::Vec3(0.0, 0.0, 1.0)));
     sphereTransform->addChild(sphereGeode);
 
-    //Cone
+    //////////////////// SPHERE ////////////////////
+
+    ///////////////////// CONE /////////////////////
+
     osg::Cone* cone = new osg::Cone(osg::Vec3(3,0,1.2),1,2);
     osg::ShapeDrawable* coneDrawable = new osg::ShapeDrawable(cone);
     osg::Material* coneMaterial = new osg::Material;
@@ -133,10 +225,13 @@ int main ()
     coneGeode->addDrawable(coneDrawable);
 
     osg::PositionAttitudeTransform* coneTransform = new osg::PositionAttitudeTransform();
+    coneTransform->setName("coneT");
     coneTransform->setPosition(osg::Vec3(0, 0, 0));
     coneTransform->setScale(osg::Vec3(1, 1, 1));
     coneTransform->setAttitude(osg::Quat(osg::DegreesToRadians(20.0), osg::Vec3(0.0, 0.0, 1.0)));
     coneTransform->addChild(coneGeode);
+
+    ///////////////////// CONE ////////////////////
 
 
     osgGA::NodeTrackerManipulator* manip = new osgGA::NodeTrackerManipulator;
