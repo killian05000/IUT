@@ -161,7 +161,6 @@ bool EventManager::handle(const osgGA::GUIEventAdapter& ea, osgGA::GUIActionAdap
 //////////////////// EVENT_MANAGER ////////////////////
 
 
-
 int main ()
 {
     osg::DisplaySettings::instance()->setNumMultiSamples( 4 );
