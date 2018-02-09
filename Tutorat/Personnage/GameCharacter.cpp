@@ -25,12 +25,17 @@ void GameCharacter::receiveDammages(int _degats)
 
 void GameCharacter::heal()
 {
-	uniform_int_distribution<int> distribution(100,200);
-	int heal = distribution(generator);
+	if (mana > 100)
+	{
+		uniform_int_distribution<int> distribution(100,200);
+		int heal = distribution(generator);
 
-	if (heal > lifeMax-life)
-		heal = lifeMax-life;
+		if (heal > lifeMax-life)
+			heal = lifeMax-life;
 
-	mana -= 100;
-	life += heal;
+		mana -= 100;
+		life += heal;
+	}
+	else
+		cout << "Plus de mana :/" << endl;
 }
