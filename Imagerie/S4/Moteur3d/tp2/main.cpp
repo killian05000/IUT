@@ -20,7 +20,7 @@ Group *generate_flock(int nb_cow, float size_x, float size_y)
 	for(int i=0; i< nb_cow; i++)
 	{
 		ref_ptr<PositionAttitudeTransform> transform = new PositionAttitudeTransform();
-		ref_ptr<Node> cow = readNodeFile("data/cow_high.3ds");
+		ref_ptr<Node> cow = readNodeFile("data/cow_low.3ds");
 
 		random_device generator;
     uniform_int_distribution<int> distribution1(0, size_x);
@@ -48,7 +48,7 @@ int main()
 	osgViewer::Viewer viewer;
 	viewer.setUpViewInWindow(100, 50, 800, 600);
 
-	generate_flock(100,10,10);
+	generate_flock(1000,30,30);
 	// Node* cow = readNodeFile("data/cow_high.3ds");
   //
 	// scene->addChild(cow);
