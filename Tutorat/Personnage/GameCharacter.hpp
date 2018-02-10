@@ -22,8 +22,9 @@ class GameCharacter
 		GameCharacter();
 		~GameCharacter();
 
-		inline int getLife() const {return life;}
-		inline int getMana() const {return mana;}
+		inline uint getLife() const {return life;}
+		inline uint getMana() const {return mana;}
+		inline uint getDegats() const {return degats;}
 		inline string getName() const {return name;}
 
 		void attack(GameCharacter& target);

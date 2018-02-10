@@ -15,8 +15,8 @@ void GameCharacter::attack(GameCharacter& target)
 {
 	uniform_int_distribution<int> distribution(1,2);
 	uint dmg = distribution(generator);
-	target.receiveDammages(degats+dmg);
 	cout << "Vous avez fais " << degats+dmg << " dommages." << endl;
+	target.receiveDammages(degats+dmg);
 }
 
 void GameCharacter::receiveDammages(uint _degats)
