@@ -1,18 +1,24 @@
 #include "GameCharacter.hpp"
 
-GameCharacter::GameCharacter(uint _life, uint _mana, string _name)
-							: life(_life), lifeMax(_life), mana(_mana), manaMax(_mana), name(_name)
+GameCharacter::GameCharacter(uint _life, uint _mana, uint _degats, string _name)
+							: life(_life), lifeMax(_life), mana(_mana), manaMax(_mana), degats(_degats), name(_name)
 {}
 
 GameCharacter::GameCharacter()
-							: life(2000), lifeMax(2000), mana(400), manaMax(400), name("")
+							: life(20), lifeMax(20), mana(10), manaMax(10), degats(5), name("")
 {}
 
 GameCharacter::~GameCharacter()
 {}
 
+void GameCharacter::attack(GameCharacter& target)
+{
+	uniform_int_distribution<int> distribution(1,2);
+	uint dmg = distribution(generator);
+	target.receiveDammages(degats+dmg);
+}
 
-void GameCharacter::receiveDammages(int _degats)
+void GameCharacter::receiveDammages(uint _degats)
 {
 	if (_degats > life)
 	{
@@ -25,15 +31,15 @@ void GameCharacter::receiveDammages(int _degats)
 
 void GameCharacter::heal()
 {
-	if (mana > 100)
+	if (mana > 2)
 	{
-		uniform_int_distribution<int> distribution(100,200);
-		int heal = distribution(generator);
+		uniform_int_distribution<int> distribution(1,4);
+		uint heal = distribution(generator);
 
 		if (heal > lifeMax-life)
 			heal = lifeMax-life;
 
-		mana -= 100;
+		mana -= 2;
 		life += heal;
 	}
 	else

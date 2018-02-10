@@ -11,13 +11,14 @@ class GameCharacter
 		uint lifeMax;
 		uint mana;
 		uint manaMax;
+		uint degats;
 		string name;
 
 	public:
 
 		random_device generator;
 
-		GameCharacter(uint _life, uint _mana, string _name);
+		GameCharacter(uint _life, uint _mana, uint degats, string _name);
 		GameCharacter();
 		~GameCharacter();
 
@@ -25,6 +26,7 @@ class GameCharacter
 		inline int getMana() const {return mana;}
 		inline string getName() const {return name;}
 
-		void receiveDammages(int _degats);
+		void attack(GameCharacter& target);
+		void receiveDammages(uint _degats);
 		void heal();
 };
