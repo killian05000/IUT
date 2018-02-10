@@ -18,6 +18,7 @@ int main()
 	cin >> pseudo1;
 	cout << "Joueur 2 Choisissez un pseudo : ";
 	cin >> pseudo2;
+	cout << endl;
 
 	GameCharacter Player1(30, 10, 3, pseudo1);
 	GameCharacter Player2(30, 10, 3, pseudo2);
@@ -29,35 +30,41 @@ int main()
 		if(tourP1)
 		{
 			char c;
-			cout << Player1.getName() << " doit chosir une action (a = attaquer ; s = se soigner) : ";
-			cin >> c;
+
+			do
+			{
+				cout << Player1.getName() << " doit chosir une action (a = attaquer ; s = se soigner) : ";
+				cin >> c;
+			} while((c != 'a') && (c != 's'));
+
 			if (c == 'a')
-			{
 				Player1.attack(Player2);
-			}
 			else if (c == 's')
-			{
 				Player1.heal();
-			}
+
 			tourP1=false;
 		}
 		else
 		{
 			char c;
-			cout << Player2.getName() << " doit chosir une action (a = attaquer ; s = se soigner) : ";
-			cin >> c;
+
+			do
+			{
+				cout << Player2.getName() << " doit chosir une action (a = attaquer ; s = se soigner) : ";
+				cin >> c;
+			} while((c!= 'a') && (c!= 's'));
+
 			if (c == 'a')
-			{
 				Player2.attack(Player1);
-			}
 			else if (c == 's')
-			{
 				Player2.heal();
-			}
+
 			tourP1=true;
+
 		}
 		cout << "->" << Player1.getName() << " à " << Player1.getLife() << " pdv" << endl;
 		cout << "->" << Player2.getName() << " à " << Player2.getLife() << " pdv" << endl;
+		cout << endl;
 	}
 	winner(Player1, Player2);
 }

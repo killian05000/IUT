@@ -41,6 +41,7 @@ void GameCharacter::heal()
 
 		mana -= 2;
 		life += heal;
+		cout << "Vous vous êtes soigné de " << heal << " pdv" << endl;
 	}
 	else if (mana == 0)
 		cout << "Plus de mana :/" << endl;
