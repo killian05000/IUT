@@ -26,13 +26,12 @@ void GameCharacter::receiveDammages(uint _degats)
 		_degats = life;
 		cout << name << " est mort." << endl;
 	}
-
 	life -= _degats;
 }
 
 void GameCharacter::heal()
 {
-	if (mana > 2)
+	if ((mana >= 2) && (life < lifeMax))
 	{
 		uniform_int_distribution<int> distribution(1,4);
 		uint heal = distribution(generator);
@@ -43,6 +42,6 @@ void GameCharacter::heal()
 		mana -= 2;
 		life += heal;
 	}
-	else
+	else if (mana == 0)
 		cout << "Plus de mana :/" << endl;
 }
