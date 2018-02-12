@@ -48,7 +48,7 @@ int main()
 	osgViewer::Viewer viewer;
 	viewer.setUpViewInWindow(100, 50, 800, 600);
 
-	generate_flock(1000,30,30);
+	generate_flock(100,30,30);
 	// Node* cow = readNodeFile("data/cow_high.3ds");
   //
 	// scene->addChild(cow);

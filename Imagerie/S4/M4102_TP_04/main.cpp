@@ -1,11 +1,12 @@
 ///////////////////////////////////////////////////////////////////////////////
-// IUT d'Aix-Marseille Université, site d'Arles
-// Département Informatique
-// 2ème année
+// IUT d'Aix-Marseille Universitï¿½, site d'Arles
+// Dï¿½partement Informatique
+// 2eme annee
 // ----------------------------------------------------------------------------
-// Auteur : Sébastien Thon
+// Auteur : Sï¿½bastien Thon
 // ----------------------------------------------------------------------------
 // Programme permettant d'afficher un terrain 3D.
+// g++ maison.cpp -o maison.exe -lglut -lGLU -lGL
 ///////////////////////////////////////////////////////////////////////////////
 
 
@@ -13,61 +14,61 @@
 #include <stdlib.h>
 #include <math.h>
 #include <GL/glu.h>
-#include "glut.h"
+#include <GL/glut.h>
 #include "terrain.h"
 
-int SCREEN_WIDTH  = 800;								// Largeur de la fenêtre OpenGL
-int SCREEN_HEIGHT = 600;								// Hauteur de la fenêtre OpenGl
+int SCREEN_WIDTH  = 800;								// Largeur de la fenï¿½tre OpenGL
+int SCREEN_HEIGHT = 600;								// Hauteur de la fenï¿½tre OpenGl
 
 #define KEY_ESC 27										// Code ASCII de la touche Echap
 
 
-float	xpos = 0, ypos = 20, zpos = 150;				// Position de la caméra
-int		angle_x = 0, angle_y = 0;						// Orientation de la caméra
+float	xpos = 0, ypos = 20, zpos = 150;				// Position de la camï¿½ra
+int		angle_x = 0, angle_y = 0;						// Orientation de la camï¿½ra
 int		mouse_x = 0, mouse_y = 0;						// Position de la souris
 
-// Paramètres de la source de lumière 0 (directionnelle)
+// Paramï¿½tres de la source de lumiï¿½re 0 (directionnelle)
 GLfloat Light0Position[]= { 4.0f, 4.0f, 2.0f, 0.0f };
 GLfloat Light0Ambient[] = { 0.6f, 0.6f, 0.6f, 1.0f };
 GLfloat Light0Diffuse[] = { 0.9f, 0.9f, 0.9f, 1.0f };
 GLfloat Light0Specular[]= { 0.5f, 0.5f, 0.5f, 1.0f };
 
-Terrain	terrain;										// Déclaration d'un objet terrain
+Terrain	terrain;										// Dï¿½claration d'un objet terrain
 
 
 
 ///////////////////////////////////////////////////////////////////////////////
-// Intitialisation de certains paramètres d'OpenGL.
+// Intitialisation de certains paramï¿½tres d'OpenGL.
 //-----------------------------------------------------------------------------
-// Paramètres :
+// Paramï¿½tres :
 //    _
 // Retour :
 //    _
 ///////////////////////////////////////////////////////////////////////////////
 GLvoid initGL()
 {
-	glClearColor(0.7, 0.9, 1.0, 1);						// Couleur servant à effacer la fenêtre (bleu ciel)
-    glShadeModel(GL_SMOOTH);							// Modèle d'ombrage : lissage de Gouraud
-	glEnable(GL_CULL_FACE);								// Ne traite pas les faces cachées
+	glClearColor(0.7, 0.9, 1.0, 1);						// Couleur servant ï¿½ effacer la fenï¿½tre (bleu ciel)
+  glShadeModel(GL_SMOOTH);							// Modï¿½le d'ombrage : lissage de Gouraud
+	glEnable(GL_CULL_FACE);								// Ne traite pas les faces cachï¿½es
 	glEnable(GL_DEPTH_TEST);							// Active le Z-Buffer
 	glDepthFunc(GL_LEQUAL);								// Mode de fonctionnement du Z-Buffer
 	glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);	// Active la correction de perspective (pour ombrage, texture, ...)
 
-	glLightfv(GL_LIGHT0, GL_AMBIENT, Light0Ambient);	// Couleur ambiante de la source de lumière 0 (directionnelle)
-	glLightfv(GL_LIGHT0, GL_DIFFUSE, Light0Diffuse);	// Couleur diffuse de la source de lumière 0
-	glLightfv(GL_LIGHT0, GL_SPECULAR,Light0Specular);	// Couleur spéculaire de la source de lumière 0
-	glLightfv(GL_LIGHT0, GL_POSITION,Light0Position);	// Direction de la source de lumière 0
-	glEnable(GL_LIGHT0);								// Activation de la source de lumière 0
+	glLightfv(GL_LIGHT0, GL_AMBIENT, Light0Ambient);	// Couleur ambiante de la source de lumiï¿½re 0 (directionnelle)
+	glLightfv(GL_LIGHT0, GL_DIFFUSE, Light0Diffuse);	// Couleur diffuse de la source de lumiï¿½re 0
+	glLightfv(GL_LIGHT0, GL_SPECULAR,Light0Specular);	// Couleur spï¿½culaire de la source de lumiï¿½re 0
+	glLightfv(GL_LIGHT0, GL_POSITION,Light0Position);	// Direction de la source de lumiï¿½re 0
+	glEnable(GL_LIGHT0);								// Activation de la source de lumiï¿½re 0
 
-	glEnable(GL_LIGHTING);								// Activation de l'éclairage général
+	glEnable(GL_LIGHTING);								// Activation de l'ï¿½clairage gï¿½nï¿½ral
 }
 
 
 
 ///////////////////////////////////////////////////////////////////////////////
-// Affiche les différents objets de la scène.
+// Affiche les diffï¿½rents objets de la scï¿½ne.
 //-----------------------------------------------------------------------------
-// Paramètres :
+// Paramï¿½tres :
 //    _
 // Retour :
 //    _
@@ -77,15 +78,15 @@ void affiche_scene()
 	terrain.affiche();							// Affiche le terrain
 
 
-	glutSwapBuffers();							// Affiche la scène (affichage en double buffer)
+	glutSwapBuffers();							// Affiche la scï¿½ne (affichage en double buffer)
 }
 
 
 
 ///////////////////////////////////////////////////////////////////////////////
-// Call-back : affichage dans la fenêtre.
+// Call-back : affichage dans la fenï¿½tre.
 //-----------------------------------------------------------------------------
-// Paramètres :
+// Paramï¿½tres :
 //    _
 // Retour :
 //    _
@@ -94,36 +95,36 @@ GLvoid callback_display()
 {
 	// On efface les pixels de l'image (color buffer) et le Z-Buffer (depth buffer).
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	
-	// On initialise la matrice de vue avec la matrice identité.
+
+	// On initialise la matrice de vue avec la matrice identitï¿½.
 	glLoadIdentity();
 
-	// On applique une translation et une rotation à la scène pour simuler
-	// un déplacement de caméra.
+	// On applique une translation et une rotation ï¿½ la scï¿½ne pour simuler
+	// un dï¿½placement de camï¿½ra.
 	glTranslatef(-xpos,-ypos,-zpos);
 	glRotatef(angle_x, 1,0,0);
 	glRotatef(angle_y, 0,1,0);
 	glTranslatef(-terrain.centre_x(),0,-terrain.centre_z());
 
-	// On re-spécifie la position des sources de lumière avec pour qu'elles
-	// soient aussi affectées par la translation et la rotation qu'on vient
-	// d'appliquer à la scène.
+	// On re-spï¿½cifie la position des sources de lumiï¿½re avec pour qu'elles
+	// soient aussi affectï¿½es par la translation et la rotation qu'on vient
+	// d'appliquer ï¿½ la scï¿½ne.
 	glLightfv(GL_LIGHT0, GL_POSITION,Light0Position);
 
-	// On affiche la scène.
+	// On affiche la scï¿½ne.
 	affiche_scene();
 
-	// On force OpenGL à afficher avant de passer à la suite.
+	// On force OpenGL ï¿½ afficher avant de passer ï¿½ la suite.
 	glFlush();
 }
 
 
 
 ///////////////////////////////////////////////////////////////////////////////
-// Call-back : redimensionnement de la fenêtre.
+// Call-back : redimensionnement de la fenï¿½tre.
 //-----------------------------------------------------------------------------
-// Paramètres :
-//    width, height (in) : nouvelles largeur et hauteur de la fenêtre.
+// Paramï¿½tres :
+//    width, height (in) : nouvelles largeur et hauteur de la fenï¿½tre.
 // Retour :
 //    _
 ///////////////////////////////////////////////////////////////////////////////
@@ -143,11 +144,11 @@ GLvoid callback_reshape(GLsizei width, GLsizei height)
 
 
 ///////////////////////////////////////////////////////////////////////////////
-// Call-back : gestion des événements clavier.
+// Call-back : gestion des ï¿½vï¿½nements clavier.
 //-----------------------------------------------------------------------------
-// Paramètres :
-//    key (in) : code ascii de la touche utilisée.
-//    x,y (in) : coordonnées de la souris.
+// Paramï¿½tres :
+//    key (in) : code ascii de la touche utilisï¿½e.
+//    x,y (in) : coordonnï¿½es de la souris.
 // Retour :
 //    _
 ///////////////////////////////////////////////////////////////////////////////
@@ -166,46 +167,46 @@ GLvoid callback_keyboard(unsigned char key, int x, int y)
 ///////////////////////////////////////////////////////////////////////////////
 // Call-back : gestion des touches speciales du clavier.
 //-----------------------------------------------------------------------------
-// Paramètres :
-//    key (in) : code ascii de la touche utilisée.
-//    x,y (in) : coordonnées de la souris.
+// Paramï¿½tres :
+//    key (in) : code ascii de la touche utilisï¿½e.
+//    x,y (in) : coordonnï¿½es de la souris.
 // Retour :
 //    _
 ///////////////////////////////////////////////////////////////////////////////
 GLvoid callback_special(int key, int x, int y)
 {
-	float speed = 1.0f;						// Vitesse de déplacement de la caméra
+	float speed = 1.0f;						// Vitesse de dï¿½placement de la camï¿½ra
 
 	switch (key)
 	{
-		case GLUT_KEY_UP:					// Flèche vers le haut : 
-			zpos -= speed;					// on déplace la caméra selon z-
-			glutPostRedisplay();			// et on demande le réaffichage.
+		case GLUT_KEY_UP:					// Flï¿½che vers le haut :
+			zpos -= speed;					// on dï¿½place la camï¿½ra selon z-
+			glutPostRedisplay();			// et on demande le rï¿½affichage.
 			break;
 
-		case GLUT_KEY_DOWN:					// Flèche vers le bas :
-			zpos += speed;					// on déplace la caméra selon z+
-			glutPostRedisplay();			// et on demande le réaffichage.
+		case GLUT_KEY_DOWN:					// Flï¿½che vers le bas :
+			zpos += speed;					// on dï¿½place la camï¿½ra selon z+
+			glutPostRedisplay();			// et on demande le rï¿½affichage.
 			break;
 
-		case GLUT_KEY_LEFT:					// Flèche vers la gauche :
-			xpos -= speed;					// on déplace la caméra selon x-
-			glutPostRedisplay();			// et on demande le réaffichage.
+		case GLUT_KEY_LEFT:					// Flï¿½che vers la gauche :
+			xpos -= speed;					// on dï¿½place la camï¿½ra selon x-
+			glutPostRedisplay();			// et on demande le rï¿½affichage.
 			break;
 
-		case GLUT_KEY_RIGHT:				// Flèche vers la droite :
-			xpos += speed;					// on déplace la caméra selon x+
-			glutPostRedisplay();			// et on demande le réaffichage.
+		case GLUT_KEY_RIGHT:				// Flï¿½che vers la droite :
+			xpos += speed;					// on dï¿½place la camï¿½ra selon x+
+			glutPostRedisplay();			// et on demande le rï¿½affichage.
 			break;
 
 		case GLUT_KEY_PAGE_UP:				// Page Up :
 			ypos += speed;
-			glutPostRedisplay();			// et on demande le réaffichage.
+			glutPostRedisplay();			// et on demande le rï¿½affichage.
 			break;
 
 		case GLUT_KEY_PAGE_DOWN:			// Page Down :
 			ypos -= speed;
-			glutPostRedisplay();			// et on demande le réaffichage.
+			glutPostRedisplay();			// et on demande le rï¿½affichage.
 			break;
 	}
 }
@@ -215,10 +216,10 @@ GLvoid callback_special(int key, int x, int y)
 ///////////////////////////////////////////////////////////////////////////////
 // Call-back : gestion de clics souris.
 //-----------------------------------------------------------------------------
-// Paramètres :
-//    button (in) : code du bouton utilisé.
-//    state  (in) : état du bouton.
-//    x,y    (in) : coordonnées de la souris.
+// Paramï¿½tres :
+//    button (in) : code du bouton utilisï¿½.
+//    state  (in) : ï¿½tat du bouton.
+//    x,y    (in) : coordonnï¿½es de la souris.
 // Retour :
 //    _
 ///////////////////////////////////////////////////////////////////////////////
@@ -234,37 +235,37 @@ GLvoid callback_mouse(int button, int state, int x, int y)
 
 
 ///////////////////////////////////////////////////////////////////////////////
-// Call-back : gestion des déplacements de la souris.
+// Call-back : gestion des dï¿½placements de la souris.
 //-----------------------------------------------------------------------------
-// Paramètres :
-//    x,y    (in) : coordonnées de la souris.
+// Paramï¿½tres :
+//    x,y    (in) : coordonnï¿½es de la souris.
 // Retour :
 //    _
 ///////////////////////////////////////////////////////////////////////////////
 GLvoid callback_motion(int x, int y)
 {
-	angle_x += y - mouse_y;						// Modifie la direction de vue de la caméra
+	angle_x += y - mouse_y;						// Modifie la direction de vue de la camï¿½ra
 	angle_y += x - mouse_x;						// en fonction de la position de la souris
 	mouse_x = x;
 	mouse_y = y;
 
-	glutPostRedisplay();						// Demande le réaffichage
+	glutPostRedisplay();						// Demande le rï¿½affichage
 }
 
 
 
 ///////////////////////////////////////////////////////////////////////////////
-// Initialise la scène.
+// Initialise la scï¿½ne.
 //-----------------------------------------------------------------------------
-// Paramètres :
+// Paramï¿½tres :
 //    _
 // Retour :
 //    _
 ///////////////////////////////////////////////////////////////////////////////
 void initialise_scene()
 {
-	// On crée le terrain au moyen d'une image en niveaux de gris au format PGM.
-	// On espace les points de 1.0 unité selon x, de 0.1 unité selon y, de 1.0 unité selon z
+	// On crï¿½e le terrain au moyen d'une image en niveaux de gris au format PGM.
+	// On espace les points de 1.0 unitï¿½ selon x, de 0.1 unitï¿½ selon y, de 1.0 unitï¿½ selon z
 	terrain.creation( 1.0, 0.1, 1.0, "terrain_128x128.pgm" );
 }
 
@@ -273,28 +274,28 @@ void initialise_scene()
 ///////////////////////////////////////////////////////////////////////////////
 // Fonction principale du programme.
 //-----------------------------------------------------------------------------
-// Paramètres :
+// Paramï¿½tres :
 //    argc (in) : nombre d'arguments de la ligne de commande.
-//    argv (in) : tableau de chaînes de caractères contenant les arguments.
+//    argv (in) : tableau de chaï¿½nes de caractï¿½res contenant les arguments.
 // Retour :
 //    Un entier contenant le code de retour du programme.
 ///////////////////////////////////////////////////////////////////////////////
 int main(int argc, char *argv[])
 {
-	// Initialisation de paramètres de Glut
+	// Initialisation de paramï¿½tres de Glut
 	glutInit(&argc, argv);
 	glutInitDisplayMode(GLUT_RGBA | GLUT_DOUBLE | GLUT_DEPTH);
 	glutInitWindowSize(SCREEN_WIDTH, SCREEN_HEIGHT);
 	glutInitWindowPosition(0, 0);
 	glutCreateWindow("Terrain");
 
-	// Intitialisation de paramètres d'OpenGL
+	// Intitialisation de paramï¿½tres d'OpenGL
 	initGL();
 
-	// Initialisation de la scène
+	// Initialisation de la scï¿½ne
 	initialise_scene();
 
-	// Déclaration des fonctions de call-back.
+	// Dï¿½claration des fonctions de call-back.
 	glutDisplayFunc(&callback_display);
 	glutReshapeFunc(&callback_reshape);
 	glutKeyboardFunc(&callback_keyboard);

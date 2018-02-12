@@ -1,11 +1,11 @@
 ///////////////////////////////////////////////////////////////////////////////
-// IUT d'Aix-Marseille Université, site d'Arles
-// Département Informatique
-// 2ème année
+// IUT d'Aix-Marseille Universitï¿½, site d'Arles
+// Dï¿½partement Informatique
+// 2ï¿½me annï¿½e
 // ----------------------------------------------------------------------------
-// Auteur : 
+// Auteur :
 // ----------------------------------------------------------------------------
-// Classe définissant un terrain 3D.
+// Classe dï¿½finissant un terrain 3D.
 ///////////////////////////////////////////////////////////////////////////////
 
 #include <math.h>
@@ -17,7 +17,7 @@
 ///////////////////////////////////////////////////////////////////////////////
 // Constructeur de la classe Terrain.
 //-----------------------------------------------------------------------------
-// Paramètres :
+// Paramï¿½tres :
 //    _
 //
 // Retour :
@@ -33,7 +33,7 @@ Terrain::Terrain()
 ///////////////////////////////////////////////////////////////////////////////
 // Destructeur de la classe Terrain.
 //-----------------------------------------------------------------------------
-// Paramètres :
+// Paramï¿½tres :
 //    _
 //
 // Retour :
@@ -51,7 +51,7 @@ Terrain::~Terrain()
 ///////////////////////////////////////////////////////////////////////////////
 // Affichage du terrain.
 //-----------------------------------------------------------------------------
-// Paramètres :
+// Paramï¿½tres :
 //    _
 //
 // Retour :
@@ -59,45 +59,47 @@ Terrain::~Terrain()
 ///////////////////////////////////////////////////////////////////////////////
 void Terrain::affiche()
 {
-	//    On étudie les points 4 par 4, en les utilisant pour tracer
+	//    On ï¿½tudie les points 4 par 4, en les utilisant pour tracer
 	//    deux triangles comme suit :
 	//
 	//         0---3      1er  triangle : 0 -> 1 -> 3
-	//	       |  /|      2ème triangle : 1 -> 2 -> 3
+	//	       |  /|      2ï¿½me triangle : 1 -> 2 -> 3
 	//         | / |
 	//         1/--2
 	//
-
-
-
+		glBegin(GL_TRIANGLES);
+			glVertex3d( Point_terrain[0].x, Point_terrain[O].y, Point_terrain[O].hauteur);
+			glVertex3d( Point_terrain[1].x, Point_terrain[1].y, Point_terrain[1].hauteur);
+			glVertex3d( Point_terrain[3].x, Point_terrain[3].y, Point_terrain[3].hauteur);
+		glEnd();
 }
 
 
 
 ///////////////////////////////////////////////////////////////////////////////
-// Création du terrain à partir d'une image.
+// Crï¿½ation du terrain ï¿½ partir d'une image.
 //-----------------------------------------------------------------------------
-// Paramètres :
+// Paramï¿½tres :
 //    cx, cy, cz     (in) : coefficients d'agrandissement selon les 3 axes.
 //    image_hauteurs (in) : image au format pgm dont les niveaux de gris
-//                          définissent les hauteurs d'un terrain.
+//                          dï¿½finissent les hauteurs d'un terrain.
 //
 // Retour :
-//    true si le terrain a pu être crée (l'image a pu être chargée),
+//    true si le terrain a pu ï¿½tre crï¿½e (l'image a pu ï¿½tre chargï¿½e),
 //    false sinon.
 ///////////////////////////////////////////////////////////////////////////////
 bool Terrain::creation(	float dx, float dy, float dz, const char *image_hauteurs )
 {
-	// Tableau de byte servant à stocker les pixels en niveaux de gris de
+	// Tableau de byte servant ï¿½ stocker les pixels en niveaux de gris de
 	// l'image au format pgm "image_hauteurs".
-	byte	*img;
+	byte	*img =nullptr;
 
 	// Chargement d'une image en niveaux de gris. Chaque pixel correspondra
-	// à un point du terrain.
+	// ï¿½ un point du terrain.
 	img = load_PGM( image_hauteurs, &nb_pt_x, &nb_pt_z );
 
-	// Si l'image n'a pas pu être chargée, alors on quitte la fonction.
-	if( img == false )
+	// Si l'image n'a pas pu ï¿½tre chargï¿½e, alors on quitte la fonction.
+	if( img == nullptr )
 		return false;
 
 	dist_x = dx;
@@ -119,7 +121,7 @@ bool Terrain::creation(	float dx, float dy, float dz, const char *image_hauteurs
 			points_terrain[num].z = z * dist_z;
 			points_terrain[num].hauteur = img[num] * dist_y;
 
-			num++; 
+			num++;
 		}
 	}
 
