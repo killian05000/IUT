@@ -1,0 +1,5 @@
+ligne de compilation avec g++ : 
+
+g++ -Wall -c truc1.cpp truc2.cpp truc3.cpp trucn.cpp
+g++ -Wall truc1.o truc2.o truc3.o trucn.o -o main.exe
+./main.exe
