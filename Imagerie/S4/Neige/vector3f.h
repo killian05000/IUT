@@ -13,7 +13,6 @@
 #include <iostream>
 using namespace std;
 
-
 class Vector3f
 {
 public:
@@ -55,7 +54,7 @@ public:
 	Vector3f& operator -= ( float d );
 	Vector3f& operator *= ( float d );
 	Vector3f& operator /= ( float d );
-	
+
 	friend Vector3f operator + ( float d, const Vector3f& v )
 	{
 		return Vector3f( v.x+d, v.y+d, v.z+d );

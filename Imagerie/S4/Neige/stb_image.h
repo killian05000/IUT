@@ -41,7 +41,6 @@
 
    Full documentation under "DOCUMENTATION" below.
 
-
    Revision 2.00 release notes:
 
       - Progressive JPEG is now supported.
@@ -4779,7 +4778,7 @@ static stbi_uc *stbi__bmp_load(stbi__context *s, int *x, int *y, int *comp, int 
          stbi__skip(s, pad);
       }
    }
-   
+
    // if alpha channel is all 0s, replace with all 255s
    if (target == 4 && all_a == 0)
       for (i=4*s->img_x*s->img_y-1; i >= 0; i -= 4)
