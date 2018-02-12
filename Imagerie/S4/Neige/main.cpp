@@ -317,8 +317,8 @@ void affiche_lumiere()
 
 GLvoid initGL()
 {
-	texture_sol.charger("Neige.tga");
-	texture_snow.charger("Particule.png");
+	texture_sol.charger("neige.tga");
+	texture_snow.charger("particule.png");
 
 	glClearColor(0, 0, 0, 1);
   glShadeModel(GL_SMOOTH);

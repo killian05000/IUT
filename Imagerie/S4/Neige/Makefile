@@ -1,4 +1,4 @@
-compiler:
+compile:
 	 g++ main.cpp -o main.exe -lglut -lGLU -lGL
 
 clear:
