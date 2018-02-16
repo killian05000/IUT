@@ -16,10 +16,6 @@ using namespace osgGA;
 ref_ptr<Group> scene = new Group;
 ref_ptr<StateSet> sceneState = scene->getOrCreateStateSet();
 ref_ptr<Switch> switchNode = new Switch;
-osgViewer::Viewer viewer;
-ref_ptr<Camera> cam1 = new Camera;
-ref_ptr<Camera> cam2 = new Camera;
-ref_ptr<Camera> cam3 = new Camera;
 bool a=true;
 
 Group *generate_flock(int nb_cow, float size_x, float size_y)
@@ -107,13 +103,6 @@ bool EventManager::handle(const GUIEventAdapter& ea, GUIActionAdapter& aa)
 						a=true;
 					}
 					break;
-
-				case 'a':
-					viewer.setCamera(cam1);
-					break;
-				case 'z':
-					viewer.setCamera(cam2);
-					break;
 			}
 			break;
 	}
@@ -122,20 +111,9 @@ bool EventManager::handle(const GUIEventAdapter& ea, GUIActionAdapter& aa)
 
 int main()
 {
+	osgViewer::Viewer viewer;
 	viewer.setUpViewInWindow(100, 50, 800, 600);
 	viewer.addEventHandler(new osgViewer::StatsHandler); // s
-
-	cam1->setClearColor(Vec4(0,0,0,1));
-	cam1->setProjectionMatrixAsPerspective(30, 4.0/3.0, 0.1, 100);
-	cam1->setViewMatrixAsLookAt(Vec3(0,-10,-10),
-															Vec3(0,0,0),
-															Vec3(0,0,1));
-
-	cam2->setClearColor(Vec4(0,0,0,1));
-	cam2->setProjectionMatrixAsPerspective(30, 4.0/3.0, 0.1, 100);
-	cam2->setViewMatrixAsLookAt(Vec3(0,10,10),
-															Vec3(0,0,0),
-															Vec3(0,0,1));
 
 	ref_ptr<EventManager> Emanager = new EventManager();
 	viewer.addEventHandler(Emanager.get());
