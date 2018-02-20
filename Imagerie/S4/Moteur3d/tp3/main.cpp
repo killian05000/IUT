@@ -7,6 +7,8 @@
 #include <osgViewer/ViewerEventHandlers>
 #include <osgGA/GUIEventHandler>
 #include <osg/Camera>
+#include <osg/Fog>
+#include <osgParticle/PrecipitationEffect>
 
 using namespace osg;
 using namespace osgDB;
@@ -17,6 +19,30 @@ ref_ptr<Group> scene = new Group;
 ref_ptr<StateSet> sceneState = scene->getOrCreateStateSet();
 ref_ptr<Switch> switchNode = new Switch;
 bool a=true;
+
+
+Node* create_ground(float sizex, float sizey)
+{
+	ref_ptr<Texture2D> texture = new Texture2D;
+	texture->setImage(readImageFile("data/snow.jpg"));
+	texture->setFilter(Texture::MIN_FILTER, Texture::LINEAR);
+	texture->setFilter(Texture::MAG_FILTER, Texture::LINEAR);
+	texture->setWrap(Texture::WRAP_S, Texture::REPEAT);
+	texture->setWrap(Texture::WRAP_T, Texture::REPEAT);
+
+	ref_ptr<Geometry> quad = createTexturedQuadGeometry(Vec3(-sizex/2, -sizey/2, 0.0), // coin de départ
+																											Vec3(sizex, 0.0, 0.0),		 // largeur
+																											Vec3(0.0, sizey, 0.0),		 // hauteur
+																											0.0, 0.0, 1.0, 1.0);		 // coordonnées de texture gauche/bas/droit/haut
+
+	quad->getOrCreateStateSet()->setTextureAttributeAndModes(0, texture.get());
+	quad->getOrCreateStateSet()->setMode(GL_DEPTH_TEST, StateAttribute::ON);
+
+	ref_ptr<Geode> geode = new Geode;
+	geode->addDrawable(quad);
+	scene->addChild(geode);
+}
+
 
 Group *generate_flock(int nb_cow, float size_x, float size_y)
 {
@@ -56,26 +82,34 @@ Group *generate_flock(int nb_cow, float size_x, float size_y)
 	scene->addChild(switchNode);
 }
 
-Node* create_ground(float sizex, float sizey)
+
+void createFog()
 {
-	ref_ptr<Texture2D> texture = new Texture2D;
-	texture->setImage(readImageFile("data/herbe.jpg"));
-	texture->setFilter(Texture::MIN_FILTER, Texture::LINEAR);
-	texture->setFilter(Texture::MAG_FILTER, Texture::LINEAR);
-	texture->setWrap(Texture::WRAP_S, Texture::REPEAT);
-	texture->setWrap(Texture::WRAP_T, Texture::REPEAT);
+	ref_ptr<Fog> pFog = new Fog();
+	pFog->setMode(Fog::LINEAR); // EXP2 ou LINEAR
+	pFog->setColor(Vec4(0.7, 0.7, 0.7, 1));
+	//pFog->setDensity(0.05f); // pour EXP2
+	pFog->setStart(10); // pour LINEAR
+	pFog->setEnd(300); // pour LINEAR
 
-	ref_ptr<Geometry> quad = createTexturedQuadGeometry(Vec3(-sizex/2, -sizey/2, 0.0), // coin de départ
-																											Vec3(sizex, 0.0, 0.0),		 // largeur
-																											Vec3(0.0, sizey, 0.0),		 // hauteur
-																											0.0, 0.0, 1.0, 1.0);		 // coordonnées de texture gauche/bas/droit/haut
+	scene->getOrCreateStateSet()->setAttribute(pFog, StateAttribute::ON);
+	scene->getOrCreateStateSet()->setMode(GL_FOG, StateAttribute::ON);
+}
 
-	quad->getOrCreateStateSet()->setTextureAttributeAndModes(0, texture.get());
-	quad->getOrCreateStateSet()->setMode(GL_DEPTH_TEST, StateAttribute::ON);
 
-	Geode* geode = new Geode;
-	geode->addDrawable(quad);
-	scene->addChild(geode);
+void generateParticles(char type, double xdir, double ydir, double zdir, double s, double number)
+{
+	ref_ptr<osgParticle::PrecipitationEffect> precipNode = new osgParticle::PrecipitationEffect();
+
+	if (type =='r')
+		precipNode->rain(number); // rain ou snow
+	else if (type =='s')
+	 	precipNode->snow(number);
+
+	precipNode->setWind(Vec3(xdir,ydir,zdir));
+	precipNode->setParticleSpeed(s);
+
+	scene->addChild(precipNode.get());
 }
 
 class EventManager : public GUIEventHandler
@@ -113,6 +147,7 @@ int main()
 {
 	osgViewer::Viewer viewer;
 	viewer.setUpViewInWindow(100, 50, 800, 600);
+	//viewer.getCamera()->setClearColor(osg::Vec4(0.7, 0.7, 0.7, 1));
 	viewer.addEventHandler(new osgViewer::StatsHandler); // s
 
 	ref_ptr<EventManager> Emanager = new EventManager();
@@ -120,6 +155,10 @@ int main()
 
 	generate_flock(100,30,30);
 	create_ground(30,30);
+	createFog();
+	generateParticles('s', 0, 0, -1, 0.4, 0.3);
+
+
 	viewer.setSceneData(scene);
 	return viewer.run();
 }
