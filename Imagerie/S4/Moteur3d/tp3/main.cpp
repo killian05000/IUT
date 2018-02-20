@@ -9,15 +9,21 @@
 #include <osg/Camera>
 #include <osg/Fog>
 #include <osgParticle/PrecipitationEffect>
+#include <osg/LightSource>
+#include <osgShadow/ShadowedScene>
+#include <osgShadow/ShadowMap>
+#include <osgShadow/SoftShadowMap>
 
 using namespace osg;
 using namespace osgDB;
 using namespace std;
 using namespace osgGA;
 
+osgViewer::Viewer viewer;
 ref_ptr<Group> scene = new Group;
 ref_ptr<StateSet> sceneState = scene->getOrCreateStateSet();
 ref_ptr<Switch> switchNode = new Switch;
+ref_ptr<osgShadow::ShadowedScene> shadowScene= new osgShadow::ShadowedScene;
 bool a=true;
 
 
@@ -40,7 +46,7 @@ Node* create_ground(float sizex, float sizey)
 
 	ref_ptr<Geode> geode = new Geode;
 	geode->addDrawable(quad);
-	scene->addChild(geode);
+	shadowScene->addChild(geode);
 }
 
 
@@ -79,7 +85,7 @@ Group *generate_flock(int nb_cow, float size_x, float size_y)
 		flock->addChild(transform);
 	}
 	switchNode->addChild(flock);
-	scene->addChild(switchNode);
+	shadowScene->addChild(switchNode);
 }
 
 
@@ -102,15 +108,58 @@ void generateParticles(char type, double xdir, double ydir, double zdir, double 
 	ref_ptr<osgParticle::PrecipitationEffect> precipNode = new osgParticle::PrecipitationEffect();
 
 	if (type =='r')
-		precipNode->rain(number); // rain ou snow
+		precipNode->rain(number);
 	else if (type =='s')
 	 	precipNode->snow(number);
+	else
+		precipNode->snow(number);
 
 	precipNode->setWind(Vec3(xdir,ydir,zdir));
 	precipNode->setParticleSpeed(s);
 
 	scene->addChild(precipNode.get());
 }
+
+void enableShadow(ref_ptr<LightSource> _light)
+{
+	//ref_ptr<osgShadow::ShadowMap> sMap = new osgShadow::ShadowMap;
+	ref_ptr<osgShadow::SoftShadowMap> sMap = new osgShadow::SoftShadowMap;
+
+	shadowScene->setShadowTechnique(sMap);
+	shadowScene->addChild(_light);
+	scene->addChild(shadowScene);
+	viewer.setSceneData(shadowScene);
+
+	float melange = 0.5;
+	sMap->setAmbientBias (osg::Vec2(melange,1.0 - melange));
+
+		//------------------------
+
+		// ref_ptr<osgShadow::ShadowedScene> shadowScene= new osgShadow::ShadowedScene;
+		// ref_ptr<osgShadow::SoftShadowMap> sm = new osgShadow::SoftShadowMap;
+    //
+		// shadowScene->setShadowTechnique(sm.get());
+		// shadowScene->addChild(lumiere.get());
+		// shadowScene->addChild(scene.get());
+		// viewer.setSceneData(shadowScene);
+}
+
+void enableLight()
+{
+	sceneState->setMode(GL_LIGHT0, StateAttribute::OFF);
+
+	ref_ptr<LightSource> light = new LightSource();
+	light->getLight()->setLightNum(1); // GL_LGHT1
+	light->getLight()->setPosition(Vec4(1, -1, 1, 0)); // 0 = directionnel 1 = ponctuelle
+	light->getLight()->setAmbient(Vec4(0.2, 0.2, 0.2, 1.0));
+	light->getLight()->setDiffuse(Vec4(1, 1, 1, 1.0));
+	light->getLight()->setSpecular(Vec4(1.0, 1.0, 1.0, 1.0));
+
+	sceneState->setMode(GL_LIGHT1, StateAttribute::ON);
+
+	enableShadow(light);
+}
+
 
 class EventManager : public GUIEventHandler
 {
@@ -145,7 +194,6 @@ bool EventManager::handle(const GUIEventAdapter& ea, GUIActionAdapter& aa)
 
 int main()
 {
-	osgViewer::Viewer viewer;
 	viewer.setUpViewInWindow(100, 50, 800, 600);
 	//viewer.getCamera()->setClearColor(osg::Vec4(0.7, 0.7, 0.7, 1));
 	viewer.addEventHandler(new osgViewer::StatsHandler); // s
@@ -153,11 +201,11 @@ int main()
 	ref_ptr<EventManager> Emanager = new EventManager();
 	viewer.addEventHandler(Emanager.get());
 
+	enableLight();
 	generate_flock(100,30,30);
 	create_ground(30,30);
 	createFog();
 	generateParticles('s', 0, 0, -1, 0.4, 0.3);
-
 
 	viewer.setSceneData(scene);
 	return viewer.run();
