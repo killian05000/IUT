@@ -41,7 +41,10 @@ static void InitializeGlutCallbacks()
 
 static void CreateVertexBuffer()
 {
+
 	float vertices[27]; // 3 points à 3 coordonnées x,y,z par point
+
+//utilisé equation parametrique d'un cercle, et si on veut 5 point incrémenter t de 1/5 car t 0->1
 
 //1er sommet
 //	vertices[0] = 0.0f;
@@ -92,6 +95,65 @@ static void CreateVertexBuffer()
  	glGenBuffers(1, &leVBO); //génération d'une référence de buffer object
 	glBindBuffer(GL_ARRAY_BUFFER, leVBO); //liaison du buffer avec un type tableau de données
 	glBufferData(GL_ARRAY_BUFFER, sizeof(float)*27, vertices, GL_STATIC_DRAW); //création et initialisation du container de données (3 sommets -> 9 float)
+
+	////////////////////////////////TESTING////////////////////////////////
+
+	/*
+		float vertices[27]; // 3 points à 3 coordonnées x,y,z par point
+
+	//utilisé equation parametrique d'un cercle, et si on veut 5 point incrémenter t de 1/5 car t 0->1
+
+	//1er sommet
+	//	vertices[0] = 0.0f;
+	//	vertices[1] = 0.0f;
+	//	vertices[2] = 0.0f;
+		vertices[0] = 0.25f;
+		vertices[1] = 0.25f;
+		vertices[2] = 0.0f;
+
+	//2ème sommet
+	//	vertices[3] = 0.25f;
+	//	vertices[4] = 0.25f;
+	//	vertices[5] = 0.0f;
+		vertices[3] = -0.25f;
+		vertices[4] = 0.25f;
+		vertices[5] = 0.0f;
+
+
+	//3ème sommet
+		vertices[6] = 0.0f;
+		vertices[7] = 0.9f;
+		vertices[8] = 0.0f;
+
+		vertices[9] = -0.25f; //pour tester
+		vertices[10] = 0.25f;
+		vertices[11] = 0.0f;
+
+		vertices[12] = -.9f;
+		vertices[13] = 0.0f;
+		vertices[14] = 0.0f;
+
+		vertices[15] = -0.25f;
+		vertices[16] = -0.25f;
+		vertices[17] = 0.0f;
+
+		vertices[18] = 0.0f;
+		vertices[19] = -0.9f;
+		vertices[20] = 0.0f;
+
+		vertices[21] = 0.25f;
+		vertices[22] = -0.25f;
+		vertices[23] = 0.0f;
+
+		vertices[24] = 0.9f;
+		vertices[25] = 0.0f;
+		vertices[26] = 0.0f;
+
+	 	glGenBuffers(1, &leVBO); //génération d'une référence de buffer object
+		glBindBuffer(GL_ARRAY_BUFFER, leVBO); //liaison du buffer avec un type tableau de données
+		glBufferData(GL_ARRAY_BUFFER, sizeof(float)*27, vertices, GL_STATIC_DRAW); //création et initialisation du container de données (3 sommets -> 9 float)
+
+		*/
 }
 
 
