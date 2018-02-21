@@ -23,7 +23,10 @@ static void RenderScene()
 	glBindBuffer(GL_ARRAY_BUFFER, leVBO);
 	glVertexPointer(3, GL_FLOAT, 0, 0); //description des données pointées
 
-	glDrawArrays(GL_POINTS, 0, 3); //3 éléments à utiliser pour le dessin
+	glDrawArrays(GL_LINE_LOOP, 0, 9); //3 éléments à utiliser pour le dessin
+	glDrawArrays(GL_TRIANGLES, 0, 3); //3 éléments à utiliser pour le dessin
+	//glDrawArrays(GL_TRIANGLES, 3, 3); //3 éléments à utiliser pour le dessin
+	glDrawArrays(GL_TRIANGLES, 5, 3); //3 éléments à utiliser pour le dessin
 
 	glDisableClientState(GL_VERTEX_ARRAY); //plus besoin de vertexArray
 
@@ -38,24 +41,31 @@ static void InitializeGlutCallbacks()
 
 static void CreateVertexBuffer()
 {
-	float vertices[9]; // 3 points à 3 coordonnées x,y,z par point
+	float vertices[27]; // 3 points à 3 coordonnées x,y,z par point
 
 //1er sommet
-	vertices[0] = 0.0f;
-	vertices[1] = 0.0f;
+//	vertices[0] = 0.0f;
+//	vertices[1] = 0.0f;
+//	vertices[2] = 0.0f;
+	vertices[0] = 0.25f;
+	vertices[1] = 0.25f;
 	vertices[2] = 0.0f;
 
 //2ème sommet
-	vertices[3] = 0.25f;
+//	vertices[3] = 0.25f;
+//	vertices[4] = 0.25f;
+//	vertices[5] = 0.0f;
+	vertices[3] = -0.25f;
 	vertices[4] = 0.25f;
 	vertices[5] = 0.0f;
+
 
 //3ème sommet
 	vertices[6] = 0.0f;
 	vertices[7] = 0.9f;
 	vertices[8] = 0.0f;
 
-/*	vertices[9] = -0.25f; //pour tester
+	vertices[9] = -0.25f; //pour tester
 	vertices[10] = 0.25f;
 	vertices[11] = 0.0f;
 
@@ -77,11 +87,11 @@ static void CreateVertexBuffer()
 
 	vertices[24] = 0.9f;
 	vertices[25] = 0.0f;
-	vertices[26] = 0.0f;*/
+	vertices[26] = 0.0f;
 
  	glGenBuffers(1, &leVBO); //génération d'une référence de buffer object
 	glBindBuffer(GL_ARRAY_BUFFER, leVBO); //liaison du buffer avec un type tableau de données
-	glBufferData(GL_ARRAY_BUFFER, sizeof(float)*9, vertices, GL_STATIC_DRAW); //création et initialisation du container de données (3 sommets -> 9 float)
+	glBufferData(GL_ARRAY_BUFFER, sizeof(float)*27, vertices, GL_STATIC_DRAW); //création et initialisation du container de données (3 sommets -> 9 float)
 }
 
 
