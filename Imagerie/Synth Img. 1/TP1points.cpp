@@ -9,9 +9,12 @@
 #include <GL/freeglut.h>
 #include <iostream>
 
+#include "Circle.hpp"
+
 using namespace std;
 
 GLuint leVBO;
+GLuint CircleVBO;
 
 static void RenderScene()
 {
@@ -20,13 +23,17 @@ static void RenderScene()
 
 //Liaison avec le buffer de vertex
 	glEnableClientState(GL_VERTEX_ARRAY);
-	glBindBuffer(GL_ARRAY_BUFFER, leVBO);
+	glBindBuffer(GL_ARRAY_BUFFER, CircleVBO);
 	glVertexPointer(3, GL_FLOAT, 0, 0); //description des données pointées
 
-	glDrawArrays(GL_LINE_LOOP, 0, 9); //3 éléments à utiliser pour le dessin
-	glDrawArrays(GL_TRIANGLES, 0, 3); //3 éléments à utiliser pour le dessin
-	//glDrawArrays(GL_TRIANGLES, 3, 3); //3 éléments à utiliser pour le dessin
-	glDrawArrays(GL_TRIANGLES, 5, 3); //3 éléments à utiliser pour le dessin
+	// glDrawArrays(GL_LINE_LOOP, 0, 9); //3 éléments à utiliser pour le dessin
+	// glDrawArrays(GL_TRIANGLES, 0, 3); //3 éléments à utiliser pour le dessin
+	// //glDrawArrays(GL_TRIANGLES, 3, 3); //3 éléments à utiliser pour le dessin
+	// glDrawArrays(GL_TRIANGLES, 5, 3); //3 éléments à utiliser pour le dessin
+
+	glDrawArrays(GL_LINE_LOOP, 0,16);
+
+
 
 	glDisableClientState(GL_VERTEX_ARRAY); //plus besoin de vertexArray
 
@@ -95,65 +102,6 @@ static void CreateVertexBuffer()
  	glGenBuffers(1, &leVBO); //génération d'une référence de buffer object
 	glBindBuffer(GL_ARRAY_BUFFER, leVBO); //liaison du buffer avec un type tableau de données
 	glBufferData(GL_ARRAY_BUFFER, sizeof(float)*27, vertices, GL_STATIC_DRAW); //création et initialisation du container de données (3 sommets -> 9 float)
-
-	////////////////////////////////TESTING////////////////////////////////
-
-	/*
-		float vertices[27]; // 3 points à 3 coordonnées x,y,z par point
-
-	//utilisé equation parametrique d'un cercle, et si on veut 5 point incrémenter t de 1/5 car t 0->1
-
-	//1er sommet
-	//	vertices[0] = 0.0f;
-	//	vertices[1] = 0.0f;
-	//	vertices[2] = 0.0f;
-		vertices[0] = 0.25f;
-		vertices[1] = 0.25f;
-		vertices[2] = 0.0f;
-
-	//2ème sommet
-	//	vertices[3] = 0.25f;
-	//	vertices[4] = 0.25f;
-	//	vertices[5] = 0.0f;
-		vertices[3] = -0.25f;
-		vertices[4] = 0.25f;
-		vertices[5] = 0.0f;
-
-
-	//3ème sommet
-		vertices[6] = 0.0f;
-		vertices[7] = 0.9f;
-		vertices[8] = 0.0f;
-
-		vertices[9] = -0.25f; //pour tester
-		vertices[10] = 0.25f;
-		vertices[11] = 0.0f;
-
-		vertices[12] = -.9f;
-		vertices[13] = 0.0f;
-		vertices[14] = 0.0f;
-
-		vertices[15] = -0.25f;
-		vertices[16] = -0.25f;
-		vertices[17] = 0.0f;
-
-		vertices[18] = 0.0f;
-		vertices[19] = -0.9f;
-		vertices[20] = 0.0f;
-
-		vertices[21] = 0.25f;
-		vertices[22] = -0.25f;
-		vertices[23] = 0.0f;
-
-		vertices[24] = 0.9f;
-		vertices[25] = 0.0f;
-		vertices[26] = 0.0f;
-
-	 	glGenBuffers(1, &leVBO); //génération d'une référence de buffer object
-		glBindBuffer(GL_ARRAY_BUFFER, leVBO); //liaison du buffer avec un type tableau de données
-		glBufferData(GL_ARRAY_BUFFER, sizeof(float)*27, vertices, GL_STATIC_DRAW); //création et initialisation du container de données (3 sommets -> 9 float)
-
-		*/
 }
 
 
@@ -176,6 +124,9 @@ int main(int argc, char** argv)
 	}
 
 	//cout << "Using GLEW Version: " << glewGetString(GLEW_VERSION);
+
+	Circle a(0,0,1,16);
+	CircleVBO = a.leVBO;
 
 	glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 
