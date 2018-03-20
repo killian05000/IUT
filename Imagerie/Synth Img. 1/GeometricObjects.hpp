@@ -1,3 +1,7 @@
+#ifndef GEOMETRICOBJECTS_HPP
+#define GEOMETRICOBJECTS_HPP
+
+
 class GeometricObjects
 {
   private:
@@ -7,3 +11,4 @@ class GeometricObjects
   public:
 
 };
+#endif
