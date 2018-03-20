@@ -13,6 +13,8 @@
 #include <osgShadow/ShadowedScene>
 #include <osgShadow/ShadowMap>
 #include <osgShadow/SoftShadowMap>
+#include <osgGA/DriveManipulator>
+#include <osgText/Text>
 
 using namespace osg;
 using namespace osgDB;
@@ -27,7 +29,7 @@ ref_ptr<osgShadow::ShadowedScene> shadowScene= new osgShadow::ShadowedScene;
 bool a=true;
 
 
-Node* create_ground(float sizex, float sizey)
+void create_ground(float sizex, float sizey)
 {
 	ref_ptr<Texture2D> texture = new Texture2D;
 	texture->setImage(readImageFile("data/snow.jpg"));
@@ -45,12 +47,12 @@ Node* create_ground(float sizex, float sizey)
 	quad->getOrCreateStateSet()->setMode(GL_DEPTH_TEST, StateAttribute::ON);
 
 	ref_ptr<Geode> geode = new Geode;
-	geode->addDrawable(quad);
-	shadowScene->addChild(geode);
+	geode->addDrawable(quad.get());
+	shadowScene->addChild(geode.get());
 }
 
 
-Group *generate_flock(int nb_cow, float size_x, float size_y)
+void generate_flock(int nb_cow, float size_x, float size_y)
 {
 	ref_ptr<Group> flock = new Group;
 	ref_ptr<LOD> lod = new LOD;
@@ -81,11 +83,11 @@ Group *generate_flock(int nb_cow, float size_x, float size_y)
 		transform->setScale(Vec3(1, 1, 1));
 		sceneState->setMode(GL_NORMALIZE, StateAttribute::ON); // pour normaliser et retrouver les effets de lumière
 
-		transform->addChild(lod);
-		flock->addChild(transform);
+		transform->addChild(lod.get());
+		flock->addChild(transform.get());
 	}
-	switchNode->addChild(flock);
-	shadowScene->addChild(switchNode);
+	switchNode->addChild(flock.get());
+	shadowScene->addChild(switchNode.get());
 }
 
 
@@ -125,10 +127,10 @@ void enableShadow(ref_ptr<LightSource> _light)
 	//ref_ptr<osgShadow::ShadowMap> sMap = new osgShadow::ShadowMap;
 	ref_ptr<osgShadow::SoftShadowMap> sMap = new osgShadow::SoftShadowMap;
 
-	shadowScene->setShadowTechnique(sMap);
-	shadowScene->addChild(_light);
-	scene->addChild(shadowScene);
-	viewer.setSceneData(shadowScene);
+	shadowScene->setShadowTechnique(sMap.get());
+	shadowScene->addChild(_light.get());
+	scene->addChild(shadowScene.get());
+	viewer.setSceneData(shadowScene.get());
 
 	float melange = 0.5;
 	sMap->setAmbientBias (osg::Vec2(melange,1.0 - melange));
@@ -157,7 +159,7 @@ void enableLight()
 
 	sceneState->setMode(GL_LIGHT1, StateAttribute::ON);
 
-	enableShadow(light);
+	enableShadow(light.get());
 }
 
 
@@ -192,14 +194,51 @@ bool EventManager::handle(const GUIEventAdapter& ea, GUIActionAdapter& aa)
 	return false;
 }
 
+ref_ptr<Node> creationHUD()
+{
+	//on crée une cam qui correspond à un écran de 1280x1024
+	ref_ptr<Camera> camera = new Camera;
+	camera->setProjectionMatrix(Matrix::ortho2D(0, 1280, 0, 1024));
+	camera->setReferenceFrame(Transform::ABSOLUTE_RF);
+	camera->setViewMatrix(Matrix::identity());
+	camera->setClearMask(GL_DEPTH_BUFFER_BIT);
+
+	//Le sous-graphe de la caméra sera affiché après celui de la caméra principale
+	//et sera donc par dessus le reste de la scène
+	camera->setRenderOrder(Camera::POST_RENDER);
+
+
+	//Les éléments graphiques du HUD (ici un simple texte) constitueront un sous-graphe
+	//de la caméra que l'on vient de créer 
+
+	ref_ptr<osgText::Text> text = new osgText::Text;
+	text->setPosition(Vec3(50.0f, 50.0f, 0.0f));
+	text->setText("Le texte de mon HUD");
+	text->setCharacterSize(20);
+	text->setFont("arial.ttf");
+
+	ref_ptr<Geode> geode = new Geode();
+	geode->getOrCreateStateSet()->setMode(GL_LIGHTING, StateAttribute::OFF);
+	geode->addDrawable(text);
+
+	camera->addChild(geode.get());
+
+	return camera;
+}
+
 int main()
 {
+	ref_ptr<DriveManipulator> camera = new DriveManipulator();
+	viewer.setCameraManipulator(camera.get());
+
 	viewer.setUpViewInWindow(100, 50, 800, 600);
 	//viewer.getCamera()->setClearColor(osg::Vec4(0.7, 0.7, 0.7, 1));
 	viewer.addEventHandler(new osgViewer::StatsHandler); // s
 
 	ref_ptr<EventManager> Emanager = new EventManager();
 	viewer.addEventHandler(Emanager.get());
+
+	scene->addChild(creationHUD().get());
 
 	enableLight();
 	generate_flock(100,30,30);
