@@ -42,6 +42,7 @@ GLuint leVBO;//pour afficher les points de contrôle
 
 void swapColor(int i)
 {
+	#include <iostream>
 	if (i==0)
 	{
 		controlPointList->at(0).setRGB(0,0,1);
@@ -105,7 +106,7 @@ GLvoid callback_keyboard(unsigned char key, int x, int y) // fonction gérant le
 				break;
 
 			case 'd':
-				controlPointList->at(dotID).x+=0.11;
+				controlPointList->at(dotID).x+=0.1;
 				cout << "Point n° " << dotID << " x = " << controlPointList->at(dotID).x << endl;
 				break;
 
